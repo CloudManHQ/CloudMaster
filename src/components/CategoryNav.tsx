@@ -1,0 +1,56 @@
+import React from 'react';
+import { Tree, Typography } from 'antd';
+import type { ProductCategory } from '../types';
+
+const { Title } = Typography;
+
+interface CategoryNavProps {
+  categories: ProductCategory[];
+  selectedCategoryId: string | null;
+  onCategoryChange: (categoryId: string | null) => void;
+}
+
+const CategoryNav: React.FC<CategoryNavProps> = ({
+  categories,
+  selectedCategoryId,
+  onCategoryChange
+}) => {
+  interface TreeDataNode {
+    title: string;
+    key: string;
+    children?: TreeDataNode[];
+  }
+
+  const generateTreeData = (categories: ProductCategory[]): TreeDataNode[] => {
+    return categories.map(category => {
+      const node: TreeDataNode = {
+        title: category.name,
+        key: category.id
+      };
+      
+      if (category.children && category.children.length > 0) {
+        node.children = generateTreeData(category.children);
+      }
+      
+      return node;
+    });
+  };
+
+  const treeData = generateTreeData(categories);
+
+  return (
+    <div className="category-nav">
+      <Title level={4}>产品类别</Title>
+      <Tree
+        defaultExpandAll
+        selectedKeys={selectedCategoryId ? [selectedCategoryId] : []}
+        onSelect={(selectedKeys) => {
+          onCategoryChange(selectedKeys[0] as string | null);
+        }}
+        treeData={treeData}
+      />
+    </div>
+  );
+};
+
+export default CategoryNav;

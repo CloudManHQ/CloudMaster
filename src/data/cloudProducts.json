@@ -1,0 +1,357 @@
+{
+  "vendors": [
+    {
+      "id": "tencent",
+      "name": "腾讯云",
+      "logo": "https://imgcache.qq.com/qcloud/tcloud_logo/ico/favicon.ico",
+      "description": "腾讯云是腾讯公司旗下的云计算服务平台，提供全球领先的云计算、大数据、人工智能等服务。",
+      "website": "https://cloud.tencent.com/"
+    },
+    {
+      "id": "huawei",
+      "name": "华为云",
+      "logo": "https://res-static.hc-cdn.cn/cloudbu-site/china/index/images/favicon.ico",
+      "description": "华为云是华为公司旗下的云计算服务平台，提供稳定可靠、安全可信、可持续发展的云服务。",
+      "website": "https://www.huaweicloud.com/"
+    },
+    {
+      "id": "volcengine",
+      "name": "火山引擎",
+      "logo": "https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulwlkulw/assets/favicon.ico",
+      "description": "火山引擎是字节跳动旗下的云计算服务平台，提供高性能、高可靠、高安全的云计算服务。",
+      "website": "https://www.volcengine.com/"
+    },
+    {
+      "id": "aliyun",
+      "name": "阿里云",
+      "logo": "https://www.aliyun.com/favicon.ico",
+      "description": "阿里云是阿里巴巴集团旗下的云计算服务平台，是全球领先的云计算和人工智能科技公司。",
+      "website": "https://www.aliyun.com/"
+    },
+    {
+      "id": "aws",
+      "name": "AWS",
+      "logo": "https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png",
+      "description": "亚马逊云科技（AWS）是全球领先的云计算服务平台，提供超过200项全功能的服务。",
+      "website": "https://aws.amazon.com/"
+    },
+    {
+      "id": "azure",
+      "name": "Azure",
+      "logo": "https://azure.microsoft.com/favicon.ico",
+      "description": "微软Azure是微软公司旗下的云计算服务平台，提供全球覆盖的云服务。",
+      "website": "https://azure.microsoft.com/"
+    },
+    {
+      "id": "gcp",
+      "name": "Google Cloud",
+      "logo": "https://www.gstatic.com/devrel-devsite/prod/vb202049041396b455b54f1428e2d3a8a7d4b4a1e06a007302399b3485604a41a/cloud/images/favicon.ico",
+      "description": "Google Cloud是谷歌公司旗下的云计算服务平台，提供全球领先的云计算服务。",
+      "website": "https://cloud.google.com/"
+    }
+  ],
+  "categories": [
+    {
+      "id": "compute",
+      "name": "计算",
+      "description": "提供各种计算资源，包括虚拟机、容器、函数计算等。",
+      "children": [
+        {
+          "id": "compute-vm",
+          "name": "虚拟机",
+          "description": "弹性云服务器、裸金属服务器等。",
+          "parentId": "compute"
+        },
+        {
+          "id": "compute-container",
+          "name": "容器服务",
+          "description": "容器编排、容器镜像服务等。",
+          "parentId": "compute"
+        },
+        {
+          "id": "compute-serverless",
+          "name": "无服务器计算",
+          "description": "函数计算、事件驱动等。",
+          "parentId": "compute"
+        }
+      ]
+    },
+    {
+      "id": "storage",
+      "name": "存储",
+      "description": "提供各种存储服务，包括对象存储、块存储、文件存储等。",
+      "children": [
+        {
+          "id": "storage-object",
+          "name": "对象存储",
+          "description": "海量、安全、低成本的云存储服务。",
+          "parentId": "storage"
+        },
+        {
+          "id": "storage-block",
+          "name": "块存储",
+          "description": "高性能、低延迟的块级存储服务。",
+          "parentId": "storage"
+        },
+        {
+          "id": "storage-file",
+          "name": "文件存储",
+          "description": "共享文件存储服务。",
+          "parentId": "storage"
+        }
+      ]
+    },
+    {
+      "id": "network",
+      "name": "网络",
+      "description": "提供各种网络服务，包括VPC、负载均衡、CDN等。",
+      "children": [
+        {
+          "id": "network-vpc",
+          "name": "虚拟私有云",
+          "description": "隔离的网络环境。",
+          "parentId": "network"
+        },
+        {
+          "id": "network-slb",
+          "name": "负载均衡",
+          "description": "流量分发服务。",
+          "parentId": "network"
+        },
+        {
+          "id": "network-cdn",
+          "name": "内容分发网络",
+          "description": "加速内容分发。",
+          "parentId": "network"
+        }
+      ]
+    },
+    {
+      "id": "database",
+      "name": "数据库",
+      "description": "提供各种数据库服务，包括关系型数据库、NoSQL数据库等。",
+      "children": [
+        {
+          "id": "database-relational",
+          "name": "关系型数据库",
+          "description": "MySQL、PostgreSQL等。",
+          "parentId": "database"
+        },
+        {
+          "id": "database-nosql",
+          "name": "NoSQL数据库",
+          "description": "MongoDB、Redis等。",
+          "parentId": "database"
+        },
+        {
+          "id": "database-cache",
+          "name": "缓存服务",
+          "description": "Redis、Memcached等。",
+          "parentId": "database"
+        }
+      ]
+    }
+  ],
+  "products": [
+    {
+      "id": "tencent-cvm",
+      "name": "云服务器 CVM",
+      "description": "腾讯云提供的弹性计算服务。",
+      "categoryId": "compute-vm",
+      "vendorId": "tencent",
+      "website": "https://cloud.tencent.com/product/cvm",
+      "features": ["弹性扩展", "高性能", "安全可靠"],
+      "documents": [
+        {
+          "id": "tencent-cvm-guide",
+          "title": "快速入门指南",
+          "type": "guide",
+          "url": "https://cloud.tencent.com/document/product/213/36308",
+          "lastUpdated": "2026-01-01"
+        },
+        {
+          "id": "tencent-cvm-api",
+          "title": "API 文档",
+          "type": "api",
+          "url": "https://cloud.tencent.com/document/api/213/15730",
+          "lastUpdated": "2026-01-01"
+        }
+      ]
+    },
+    {
+      "id": "tencent-cos",
+      "name": "对象存储 COS",
+      "description": "腾讯云提供的对象存储服务。",
+      "categoryId": "storage-object",
+      "vendorId": "tencent",
+      "website": "https://cloud.tencent.com/product/cos",
+      "features": ["海量存储", "安全可靠", "低成本"],
+      "documents": [
+        {
+          "id": "tencent-cos-guide",
+          "title": "快速入门指南",
+          "type": "guide",
+          "url": "https://cloud.tencent.com/document/product/436/11360",
+          "lastUpdated": "2026-01-01"
+        },
+        {
+          "id": "tencent-cos-api",
+          "title": "API 文档",
+          "type": "api",
+          "url": "https://cloud.tencent.com/document/api/436/7751",
+          "lastUpdated": "2026-01-01"
+        }
+      ]
+    },
+    {
+      "id": "huawei-ecs",
+      "name": "弹性云服务器 ECS",
+      "description": "华为云提供的弹性计算服务。",
+      "categoryId": "compute-vm",
+      "vendorId": "huawei",
+      "website": "https://www.huaweicloud.com/product/ecs.html",
+      "features": ["弹性扩展", "高性能", "安全可靠"],
+      "documents": [
+        {
+          "id": "huawei-ecs-guide",
+          "title": "快速入门指南",
+          "type": "guide",
+          "url": "https://support.huaweicloud.com/qs-ecs/index.html",
+          "lastUpdated": "2026-01-01"
+        },
+        {
+          "id": "huawei-ecs-api",
+          "title": "API 文档",
+          "type": "api",
+          "url": "https://support.huaweicloud.com/api-ecs/index.html",
+          "lastUpdated": "2026-01-01"
+        }
+      ]
+    },
+    {
+      "id": "aliyun-ecs",
+      "name": "云服务器 ECS",
+      "description": "阿里云提供的弹性计算服务。",
+      "categoryId": "compute-vm",
+      "vendorId": "aliyun",
+      "website": "https://www.aliyun.com/product/ecs",
+      "features": ["弹性扩展", "高性能", "安全可靠"],
+      "documents": [
+        {
+          "id": "aliyun-ecs-guide",
+          "title": "快速入门指南",
+          "type": "guide",
+          "url": "https://help.aliyun.com/document_detail/25422.html",
+          "lastUpdated": "2026-01-01"
+        },
+        {
+          "id": "aliyun-ecs-api",
+          "title": "API 文档",
+          "type": "api",
+          "url": "https://help.aliyun.com/document_detail/35187.html",
+          "lastUpdated": "2026-01-01"
+        }
+      ]
+    },
+    {
+      "id": "aws-ec2",
+      "name": "弹性计算云 EC2",
+      "description": "AWS 提供的弹性计算服务。",
+      "categoryId": "compute-vm",
+      "vendorId": "aws",
+      "website": "https://aws.amazon.com/ec2/",
+      "features": ["弹性扩展", "高性能", "安全可靠"],
+      "documents": [
+        {
+          "id": "aws-ec2-guide",
+          "title": "快速入门指南",
+          "type": "guide",
+          "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html",
+          "lastUpdated": "2026-01-01"
+        },
+        {
+          "id": "aws-ec2-api",
+          "title": "API 文档",
+          "type": "api",
+          "url": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Welcome.html",
+          "lastUpdated": "2026-01-01"
+        }
+      ]
+    },
+    {
+      "id": "azure-vm",
+      "name": "虚拟机",
+      "description": "Azure 提供的虚拟机服务。",
+      "categoryId": "compute-vm",
+      "vendorId": "azure",
+      "website": "https://azure.microsoft.com/services/virtual-machines/",
+      "features": ["弹性扩展", "高性能", "安全可靠"],
+      "documents": [
+        {
+          "id": "azure-vm-guide",
+          "title": "快速入门指南",
+          "type": "guide",
+          "url": "https://learn.microsoft.com/azure/virtual-machines/windows/quick-create-portal",
+          "lastUpdated": "2026-01-01"
+        },
+        {
+          "id": "azure-vm-api",
+          "title": "API 文档",
+          "type": "api",
+          "url": "https://learn.microsoft.com/rest/api/compute/virtual-machines",
+          "lastUpdated": "2026-01-01"
+        }
+      ]
+    },
+    {
+      "id": "gcp-compute",
+      "name": "Compute Engine",
+      "description": "Google Cloud 提供的虚拟机服务。",
+      "categoryId": "compute-vm",
+      "vendorId": "gcp",
+      "website": "https://cloud.google.com/compute-engine",
+      "features": ["弹性扩展", "高性能", "安全可靠"],
+      "documents": [
+        {
+          "id": "gcp-compute-guide",
+          "title": "快速入门指南",
+          "type": "guide",
+          "url": "https://cloud.google.com/compute/docs/quickstart-linux",
+          "lastUpdated": "2026-01-01"
+        },
+        {
+          "id": "gcp-compute-api",
+          "title": "API 文档",
+          "type": "api",
+          "url": "https://cloud.google.com/compute/docs/reference/rest/v1",
+          "lastUpdated": "2026-01-01"
+        }
+      ]
+    },
+    {
+      "id": "volcengine-ecs",
+      "name": "弹性云服务器 ECS",
+      "description": "火山引擎提供的弹性计算服务。",
+      "categoryId": "compute-vm",
+      "vendorId": "volcengine",
+      "website": "https://www.volcengine.com/product/ecs",
+      "features": ["弹性扩展", "高性能", "安全可靠"],
+      "documents": [
+        {
+          "id": "volcengine-ecs-guide",
+          "title": "快速入门指南",
+          "type": "guide",
+          "url": "https://www.volcengine.com/docs/6396/74968",
+          "lastUpdated": "2026-01-01"
+        },
+        {
+          "id": "volcengine-ecs-api",
+          "title": "API 文档",
+          "type": "api",
+          "url": "https://www.volcengine.com/docs/6396/69310",
+          "lastUpdated": "2026-01-01"
+        }
+      ]
+    }
+  ]
+}
