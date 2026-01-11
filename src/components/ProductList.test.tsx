@@ -73,7 +73,7 @@ describe('ProductList Component', () => {
     
     expect(screen.getByText('弹性扩展')).toBeInTheDocument();
     expect(screen.getByText('高性能')).toBeInTheDocument();
-    expect(screen.getByText('安全可靠')).toBeInTheDocument();
+    expect(screen.getAllByText('安全可靠').length).toBe(2);
     expect(screen.getByText('海量存储')).toBeInTheDocument();
     expect(screen.getByText('低成本')).toBeInTheDocument();
   });
@@ -86,7 +86,7 @@ describe('ProductList Component', () => {
       />
     );
     
-    expect(screen.getByText('快速入门指南')).toBeInTheDocument();
+    expect(screen.getAllByText('快速入门指南').length).toBe(2);
     expect(screen.getByText('API 文档')).toBeInTheDocument();
   });
 

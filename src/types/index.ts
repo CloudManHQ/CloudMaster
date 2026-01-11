@@ -22,6 +22,26 @@ export interface ProductDocument {
   lastUpdated: string;
 }
 
+// JSON数据类型定义
+export interface JSONProductDocument {
+  id: string;
+  title: string;
+  type: string;
+  url: string;
+  lastUpdated: string;
+}
+
+export interface JSONProduct {
+  id: string;
+  name: string;
+  description: string;
+  categoryId: string;
+  vendorId: string;
+  website: string;
+  features: string[];
+  documents: JSONProductDocument[];
+}
+
 export interface CloudProduct {
   id: string;
   name: string;

@@ -44,8 +44,8 @@ const CategoryNav: React.FC<CategoryNavProps> = ({
       <Tree
         defaultExpandAll
         selectedKeys={selectedCategoryId ? [selectedCategoryId] : []}
-        onSelect={(selectedKeys) => {
-          onCategoryChange(selectedKeys[0] as string | null);
+        onSelect={(_, info) => {
+          onCategoryChange(info.node.key as string | null);
         }}
         treeData={treeData}
       />

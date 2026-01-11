@@ -1,4 +1,4 @@
-import type { CloudVendor, ProductCategory, CloudProduct, VendorProducts } from '../types';
+import type { CloudVendor, ProductCategory, CloudProduct, VendorProducts, JSONProduct, JSONProductDocument } from '../types';
 import cloudProductsData from '../data/cloudProducts.json';
 
 class DataService {
@@ -10,9 +10,9 @@ class DataService {
     this.vendors = cloudProductsData.vendors;
     this.categories = cloudProductsData.categories;
     // 修复JSON数据类型转换错误
-    this.products = cloudProductsData.products.map(product => ({
+    this.products = cloudProductsData.products.map((product: JSONProduct) => ({
       ...product,
-      documents: product.documents.map(doc => ({
+      documents: product.documents.map((doc: JSONProductDocument) => ({
         ...doc,
         type: doc.type as 'guide' | 'api' | 'faq' | 'tutorial' | 'whitepaper'
       }))

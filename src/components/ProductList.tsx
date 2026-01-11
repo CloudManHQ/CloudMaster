@@ -1,9 +1,10 @@
 import React from 'react';
-import { Card, Grid, Typography, Tag, Space, Button } from 'antd';
+import { Card, Col, Typography, Tag, Space, Button } from 'antd';
 import type { CloudProduct } from '../types';
 import { LinkOutlined, BookOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
+
 
 interface ProductListProps {
   products: CloudProduct[];
@@ -27,8 +28,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onProductSelect }) 
       <Title level={4}>产品列表</Title>
       <div style={{ display: 'flex', flexWrap: 'wrap', margin: '-8px' }}>
         {products.map(product => (
-          <div key={product.id} style={{ padding: '8px', width: '100%' }}>
-            <Grid xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
+          <Col key={product.id} xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} style={{ padding: '8px' }}>
               <Card
                 title={product.name}
                 extra={
@@ -77,7 +77,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onProductSelect }) 
                     <div>
                       <div style={{ fontWeight: 500, marginBottom: 4 }}>{doc.title}</div>
                       <Space>
-                        <Tag color="green" size="small">{getDocumentTypeLabel(doc.type)}</Tag>
+                        <Tag color="green">{getDocumentTypeLabel(doc.type)}</Tag>
                         <Text type="secondary" style={{ fontSize: 12 }}>最后更新: {doc.lastUpdated}</Text>
                       </Space>
                     </div>
@@ -88,9 +88,8 @@ const ProductList: React.FC<ProductListProps> = ({ products, onProductSelect }) 
                 ))}
               </div>
               </Card>
-            </Grid>
-          </div>
-        ))}
+            </Col>
+          ))}
       </div>
     </div>
   );
