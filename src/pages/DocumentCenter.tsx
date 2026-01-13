@@ -78,11 +78,11 @@ const DocumentCenter: React.FC = () => {
   };
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#f0f2f5' }}>
+    <Layout style={{ minHeight: '100vh', background: '#fff' }}>
       <Header style={{ 
-        background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)', 
+        background: '#fff', 
         padding: '0 40px', 
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)', 
+        borderBottom: '1px solid #f0f0f0', 
         position: 'fixed', 
         width: '100%', 
         zIndex: 100,
@@ -91,39 +91,39 @@ const DocumentCenter: React.FC = () => {
         justifyContent: 'space-between'
       }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Title level={2} style={{ margin: '0', color: '#fff', fontWeight: 600 }}>
-            CloudMaster - 云产品文档中心
+          <Title level={2} style={{ margin: '0', color: '#1890ff', fontWeight: 500 }}>
+            CloudMaster
           </Title>
         </div>
-        <div style={{ width: '350px' }}>
+        <div style={{ width: '300px' }}>
           <Search
             placeholder="搜索产品"
             allowClear
-            enterButton={<SearchOutlined style={{ color: '#1890ff' }} />}
+            enterButton={<SearchOutlined />}
             size="middle"
             onSearch={handleSearch}
             onChange={(e) => handleSearch(e.target.value)}
             value={searchTerm}
-            style={{ backgroundColor: '#fff', borderRadius: 8 }}
+            style={{ border: '1px solid #d9d9d9' }}
           />
         </div>
       </Header>
       <Layout style={{ padding: '64px 0 0', minHeight: '100vh' }}>
-        <Sider width={160} style={{ background: '#fff', padding: '16px', borderRight: '1px solid #f0f0f0', boxShadow: '2px 0 8px rgba(0, 0, 0, 0.05)' }}>
+        <Sider width={140} style={{ background: '#fff', padding: '16px', borderRight: '1px solid #f0f0f0' }}>
           <VendorSelector
             vendors={vendors}
             selectedVendorId={selectedVendorId}
             onVendorChange={handleVendorChange}
           />
         </Sider>
-        <Sider width={160} style={{ background: '#fff', padding: '16px', borderRight: '1px solid #f0f0f0', boxShadow: '2px 0 8px rgba(0, 0, 0, 0.05)' }}>
+        <Sider width={140} style={{ background: '#fff', padding: '16px', borderRight: '1px solid #f0f0f0' }}>
           <CategoryNav
             categories={categories}
             selectedCategoryId={selectedCategoryId}
             onCategoryChange={handleCategoryChange}
           />
         </Sider>
-        <Content style={{ padding: '16px 24px', background: '#f0f2f5', overflow: 'auto' }}>
+        <Content style={{ padding: '16px 24px', background: '#fff', overflow: 'auto' }}>
           {selectedProductId ? (
             <ProductDetail
               product={selectedProduct}

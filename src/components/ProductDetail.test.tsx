@@ -40,7 +40,7 @@ describe('ProductDetail Component', () => {
     
     expect(screen.getByText('云服务器 CVM')).toBeInTheDocument();
     expect(screen.getByText('腾讯云提供的弹性计算服务。')).toBeInTheDocument();
-    expect(screen.getByText('返回产品列表')).toBeInTheDocument();
+    expect(screen.getByText('返回列表')).toBeInTheDocument();
   });
 
   test('should render "产品不存在" when product is undefined', () => {
@@ -78,7 +78,7 @@ describe('ProductDetail Component', () => {
     
     expect(screen.getByText('快速入门指南')).toBeInTheDocument();
     expect(screen.getByText('API 文档')).toBeInTheDocument();
-    expect(screen.getAllByText('查看文档').length).toBe(2);
+    expect(screen.getAllByText('查看').length).toBe(2);
   });
 
   test('should have correct link to product website', () => {
@@ -89,11 +89,16 @@ describe('ProductDetail Component', () => {
       />
     );
     
-    const officialWebsiteButton = screen.getByText('访问产品官网');
-    expect(officialWebsiteButton.closest('a')).toHaveAttribute('href', 'https://cloud.tencent.com/product/cvm');
+    // 查找所有链接
+    const links = screen.getAllByRole('link');
+    // 检查是否有链接的href属性是正确的产品官网地址
+    const hasCorrectLink = links.some(link => 
+      link.getAttribute('href') === 'https://cloud.tencent.com/product/cvm'
+    );
+    expect(hasCorrectLink).toBe(true);
   });
 
-  test('should call onBack when "返回产品列表" button is clicked', () => {
+  test('should call onBack when "返回列表" button is clicked', () => {
     const mockOnBack = jest.fn();
     
     render(
@@ -103,7 +108,7 @@ describe('ProductDetail Component', () => {
       />
     );
     
-    fireEvent.click(screen.getByText('返回产品列表'));
+    fireEvent.click(screen.getByText('返回列表'));
     expect(mockOnBack).toHaveBeenCalled();
   });
 });

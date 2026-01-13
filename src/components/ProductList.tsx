@@ -25,21 +25,21 @@ const ProductList: React.FC<ProductListProps> = ({ products, onProductSelect }) 
 
   return (
     <div className="product-list">
-      <Title level={4}>产品列表</Title>
+      <Title level={4} style={{ marginBottom: 16 }}>产品列表</Title>
       <div style={{ display: 'flex', flexWrap: 'wrap', margin: '-8px' }}>
         {products.map(product => (
           <Col key={product.id} xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} style={{ padding: '8px' }}>
               <Card
                 title={product.name}
                 extra={
-                  <Space>
+                  <Space size="small">
                     <Button
                       type="primary"
                       icon={<BookOutlined />}
                       onClick={() => onProductSelect(product.id)}
                       size="small"
                     >
-                      查看文档
+                      文档
                     </Button>
                     <Button
                       icon={<LinkOutlined />}
@@ -48,40 +48,40 @@ const ProductList: React.FC<ProductListProps> = ({ products, onProductSelect }) 
                       rel="noopener noreferrer"
                       size="small"
                     >
-                      官方网站
+                      官网
                     </Button>
                   </Space>
                 }
                 hoverable
                 style={{ 
-                  borderRadius: 12, 
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-                  transition: 'all 0.3s ease'
+                  borderRadius: 4, 
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+                  border: '1px solid #f0f0f0'
                 }}
-                bodyStyle={{ padding: 20 }}
+                bodyStyle={{ padding: 16 }}
               >
-                <Text type="secondary">{product.description}</Text>
+                <Text type="secondary" style={{ fontSize: 13 }}>{product.description}</Text>
                 <br />
                 <br />
-                <Space wrap>
+                <Space wrap size="small">
                   {product.features.map((feature, index) => (
                     <Tag key={index} color="blue">{feature}</Tag>
                   ))}
                 </Space>
                 <br />
                 <br />
-                <Title level={5}>相关文档</Title>
-              <div style={{ paddingLeft: 16 }}>
+                <Text strong style={{ fontSize: 13 }}>文档:</Text>
+              <div style={{ paddingLeft: 12, marginTop: 8 }}>
                 {product.documents.map(doc => (
-                  <div key={doc.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, padding: '4px 0' }}>
+                  <div key={doc.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, fontSize: 12 }}>
                     <div>
-                      <div style={{ fontWeight: 500, marginBottom: 4 }}>{doc.title}</div>
-                      <Space>
+                      <div style={{ fontWeight: 500, marginBottom: 2 }}>{doc.title}</div>
+                      <Space size="small">
                         <Tag color="green">{getDocumentTypeLabel(doc.type)}</Tag>
-                        <Text type="secondary" style={{ fontSize: 12 }}>最后更新: {doc.lastUpdated}</Text>
+                        <Text type="secondary" style={{ fontSize: 11 }}>{doc.lastUpdated}</Text>
                       </Space>
                     </div>
-                    <a href={doc.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 14 }}>
+                    <a href={doc.url} target="_blank" rel="noopener noreferrer" style={{ color: '#1890ff' }}>
                       查看
                     </a>
                   </div>

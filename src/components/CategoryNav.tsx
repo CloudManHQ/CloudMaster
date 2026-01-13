@@ -39,8 +39,8 @@ const CategoryNav: React.FC<CategoryNavProps> = ({
   const treeData = generateTreeData(categories);
 
   return (
-    <div className="category-nav">
-      <Title level={4}>产品类别</Title>
+    <div>
+      <Title level={5} style={{ marginBottom: 16 }}>产品类别</Title>
       <Tree
         defaultExpandAll
         selectedKeys={selectedCategoryId ? [selectedCategoryId] : []}
