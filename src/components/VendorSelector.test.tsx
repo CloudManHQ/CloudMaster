@@ -29,7 +29,7 @@ describe('VendorSelector Component', () => {
       />
     );
     
-    expect(screen.getByText('选择云厂商')).toBeInTheDocument();
+    expect(screen.getByText('云厂商')).toBeInTheDocument();
     expect(screen.getByText('腾讯云')).toBeInTheDocument();
     expect(screen.getByText('阿里云')).toBeInTheDocument();
   });

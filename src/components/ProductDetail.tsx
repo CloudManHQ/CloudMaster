@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Typography, Tag, Space, Button, Divider, Descriptions } from 'antd';
 import type { CloudProduct } from '../types';
-import { LinkOutlined, ArrowLeftOutlined, CalendarOutlined } from '@ant-design/icons';
+import { LinkOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 
@@ -50,79 +50,67 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onBack }) => {
 
   return (
     <div className="product-detail">
-      <Button icon={<ArrowLeftOutlined />} onClick={onBack} style={{ marginBottom: 16 }}>
-        返回产品列表
+      <Button icon={<ArrowLeftOutlined />} onClick={onBack} style={{ marginBottom: 16, border: '1px solid #d9d9d9' }}>
+        返回列表
       </Button>
       
       <Card
-        title={
-          <Space>
-            {product.name}
-            <Tag color="blue">{product.vendorId.toUpperCase()}</Tag>
-          </Space>
-        }
+        title={product.name}
         extra={
-          <Button
-            icon={<LinkOutlined />}
-            href={product.website}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            访问产品官网
-          </Button>
+          <a href={product.website} target="_blank" rel="noopener noreferrer">
+            <Button size="small">
+              官网
+            </Button>
+          </a>
         }
-        bordered={false}
+        bordered
+        style={{ borderRadius: 4, border: '1px solid #d9d9d9' }}
       >
-        <div style={{ marginBottom: 24 }}>
-          <Text type="secondary" style={{ fontSize: '16px', lineHeight: '1.6' }}>
+        <div style={{ marginBottom: 16 }}>
+          <Text type="secondary" style={{ fontSize: '14px', lineHeight: '1.5' }}>
             {product.description}
           </Text>
         </div>
 
-        <Descriptions bordered column={2} size="middle">
-          <Descriptions.Item label="所属类别">{product.categoryId ? product.categoryId.split('-').join(' ') : '未分类'}</Descriptions.Item>
-          <Descriptions.Item label="产品官网">
-            <a href={product.website} target="_blank" rel="noopener noreferrer">
+        <Descriptions column={2} size="small">
+          <Descriptions.Item label="类别">{product.categoryId ? product.categoryId.split('-').join(' ') : '未分类'}</Descriptions.Item>
+          <Descriptions.Item label="官网">
+            <a href={product.website} target="_blank" rel="noopener noreferrer" style={{ color: '#1890ff' }}>
               {product.website} <LinkOutlined style={{ fontSize: 12 }} />
             </a>
           </Descriptions.Item>
         </Descriptions>
 
-        <Divider>
-          <Title level={5} style={{ margin: 0 }}>产品特性</Title>
-        </Divider>
+        <Divider style={{ margin: '16px 0' }} />
         
-        <Space wrap style={{ marginBottom: 24 }}>
-          {product.features.map((feature, index) => (
-            <Tag key={index} color="blue">{feature}</Tag>
-          ))}
-        </Space>
+        <div style={{ marginBottom: 16 }}>
+          <Text strong style={{ marginBottom: 8, display: 'block' }}>产品特性:</Text>
+          <Space wrap size="small">
+            {product.features.map((feature, index) => (
+              <Tag key={index} color="blue">{feature}</Tag>
+            ))}
+          </Space>
+        </div>
 
-        <Divider>
-          <Title level={5} style={{ margin: 0 }}>相关文档</Title>
-        </Divider>
+        <Divider style={{ margin: '16px 0' }} />
         
-        <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: 16 }}>
+        <div>
+          <Text strong style={{ marginBottom: 8, display: 'block' }}>相关文档:</Text>
           {product.documents.map(doc => (
-            <div key={doc.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, padding: '8px 0', borderBottom: '1px solid #f5f5f5' }}>
+            <div key={doc.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, padding: '8px 0', borderBottom: '1px solid #f5f5f5' }}>
               <div>
-                <div style={{ fontWeight: 500, marginBottom: 8 }}>
-                  <Space size="middle">
-                    {doc.title}
-                    <Tag color={getDocumentTypeColor(doc.type)}>
-                      {getDocumentTypeLabel(doc.type)}
-                    </Tag>
-                  </Space>
-                </div>
-                <Space>
-                  <CalendarOutlined style={{ fontSize: 12, color: '#8c8c8c' }} />
+                <div style={{ fontWeight: 500, marginBottom: 4 }}>{doc.title}</div>
+                <Space size="small">
+                  <Tag color={getDocumentTypeColor(doc.type)}>
+                    {getDocumentTypeLabel(doc.type)}
+                  </Tag>
                   <Text type="secondary" style={{ fontSize: 12 }}>
-                    最后更新: {doc.lastUpdated}
+                    {doc.lastUpdated}
                   </Text>
                 </Space>
               </div>
-              <a href={doc.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 14 }}>
-                查看文档 <LinkOutlined style={{ fontSize: 12 }} />
+              <a href={doc.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#1890ff' }}>
+                查看 <LinkOutlined style={{ fontSize: 12 }} />
               </a>
             </div>
           ))}

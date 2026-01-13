@@ -16,13 +16,13 @@ const VendorSelector: React.FC<VendorSelectorProps> = ({
   onVendorChange
 }) => {
   return (
-    <div className="vendor-selector">
-      <Title level={4}>选择云厂商</Title>
+    <div>
+      <Title level={5} style={{ marginBottom: 16 }}>云厂商</Title>
       <Radio.Group
         value={selectedVendorId}
         onChange={(e) => onVendorChange(e.target.value)}
         buttonStyle="solid"
-        size="middle"
+        size="small"
       >
         <Space direction="vertical" wrap>
           {vendors.map(vendor => (

@@ -90,7 +90,7 @@ describe('ProductList Component', () => {
     expect(screen.getByText('API 文档')).toBeInTheDocument();
   });
 
-  test('should call onProductSelect when "查看文档" button is clicked', () => {
+  test('should call onProductSelect when "文档" button is clicked', () => {
     const mockOnProductSelect = jest.fn();
     
     render(
@@ -100,8 +100,8 @@ describe('ProductList Component', () => {
       />
     );
     
-    // 获取所有"查看文档"按钮
-    const viewDocButtons = screen.getAllByText('查看文档');
+    // 获取所有"文档"按钮
+    const viewDocButtons = screen.getAllByText('文档');
     fireEvent.click(viewDocButtons[0]);
     expect(mockOnProductSelect).toHaveBeenCalledWith('tencent-cvm');
     
@@ -117,8 +117,8 @@ describe('ProductList Component', () => {
       />
     );
     
-    // 获取所有"官方网站"按钮
-    const officialWebsiteButtons = screen.getAllByText('官方网站');
+    // 获取所有"官网"按钮
+    const officialWebsiteButtons = screen.getAllByText('官网');
     expect(officialWebsiteButtons[0].closest('a')).toHaveAttribute('href', 'https://cloud.tencent.com/product/cvm');
     expect(officialWebsiteButtons[1].closest('a')).toHaveAttribute('href', 'https://cloud.tencent.com/product/cos');
   });
