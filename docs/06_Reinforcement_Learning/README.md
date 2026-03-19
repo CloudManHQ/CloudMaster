@@ -26,6 +26,16 @@
     └──────────────────────┘
 ```
 
+## 🚀 速成指南 (In-Nutshell Quick Start)
+
+> 面向初级运维人员的入门材料，包含丰富的 Mermaid 图示。
+
+| 主题 | 描述 | 速成文档 |
+|------|------|----------|
+| AI 智能体 | 构建能思考、规划、行动的自主 AI 系统 | [Agent-in-nutshell.md](./AI_Agents/Agent-in-nutshell.md) |
+
+---
+
 ## 内容索引 (Content Index)
 
 | 主题 | 难度 | 描述 | 文档链接 |

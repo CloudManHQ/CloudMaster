@@ -28,6 +28,31 @@
     └──────────────────┘   └───────────────┘
 ```
 
+## 🚀 速成指南 (In-Nutshell Quick Start)
+
+> 面向初级运维人员的入门材料，包含丰富的 Mermaid 图示。支持 **运维工程师 → AI Agent 工程师** 转型学习路径。
+
+```mermaid
+flowchart LR
+    A[模型训练] --> B[模型推理]
+    B --> C[RAG 系统]
+    C --> D[AI 技能]
+    D --> E[AI 工作流]
+    E --> F[AI 测试]
+```
+
+| 主题 | 描述 | 速成文档 |
+|------|------|----------|
+| 模型训练 | 从零开始训练 AI/ML 模型 | [Model-Training-in-nutshell.md](./Model_Training/Model-Training-in-nutshell.md) |
+| 模型推理 | 生产环境使用模型进行预测 | [Inference-in-nutshell.md](./Deployment_Inference/Inference-in-nutshell.md) |
+| RAG 系统 | 检索增强生成，访问私有知识 | [RAG-in-nutshell.md](./RAG_Systems/RAG-in-nutshell.md) |
+| AI 技能 | 构建智能体的可复用能力 | [Skills-in-nutshell.md](./AI_Skills/Skills-in-nutshell.md) |
+| AI 工作流 | 编排生产级自动化流水线 | [Workflow-in-nutshell.md](./AI_Workflow/Workflow-in-nutshell.md) |
+| **AI 测试** | 测试、评估和验证 AI 系统 | [AI-Testing-in-nutshell.md](./AI_Testing/AI-Testing-in-nutshell.md) |
+| **OpenClaw 生态** | AI Agent 框架，自主执行任务的智能助手 | [OpenClaw_Ecosystem.md](./OpenClaw_Ecosystem/OpenClaw_Ecosystem.md) |
+
+---
+
 ## 内容索引 (Content Index)
 
 | 主题 | 难度 | 描述 | 文档链接 |
@@ -36,6 +61,11 @@
 | RAG 系统 (RAG Systems) | 实战 | 向量数据库、混合检索、重排序，构建知识增强应用 | [RAG_Systems.md](./RAG_Systems/RAG_Systems.md) |
 | MLOps 流水线 (MLOps Pipeline) | 实战 | 实验跟踪、模型注册、CI/CD、监控告警，自动化 ML 工作流 | [MLOps_Pipeline/](./MLOps_Pipeline/) |
 | 模型评估 (Model Evaluation) | 进阶 | 离线指标、在线 A/B 测试、LLM 评估（MT-Bench/AlpacaEval） | [Model_Evaluation/](./Model_Evaluation/) |
+| 模型训练 (Model Training) | 实战 | 训练循环、超参数、监控、检查点管理 | [Model_Training/](./Model_Training/) |
+| AI 技能 (AI Skills) | 实战 | 构建智能体的可复用能力模块 | [AI_Skills/](./AI_Skills/) |
+| AI 工作流 (AI Workflow) | 实战 | 流水线编排、错误处理、监控告警 | [AI_Workflow/](./AI_Workflow/) |
+| AI 测试 (AI Testing) | 实战 | 测试、评估和验证 AI 系统，确保生产环境可靠性 | [AI_Testing/](./AI_Testing/) |
+| **OpenClaw 生态系统** (OpenClaw Ecosystem) | 实战 | AI Agent 框架、技能市场、桌面控制，构建自主行动的 AI 助手 | [OpenClaw_Ecosystem/](./OpenClaw_Ecosystem/) |
 
 ## 前置知识 (Prerequisites)
 
@@ -56,6 +86,10 @@
 - **MLOps**: 机器学习运维，覆盖训练、部署、监控全生命周期
 - **Feature Store**: 特征存储系统，统一管理训练和推理特征
 - **模型漂移 (Model Drift)**: 生产环境数据分布变化导致性能下降
+- **AI Agent**: 能够自主执行任务的 AI 系统，不只是对话而是实际行动
+- **OpenClaw**: 开源 AI Agent 框架，支持多平台控制和技能扩展
+- **Skills (技能)**: AI Agent 的可扩展能力模块，通过 ClawHub 市场分发
+- **Computer Use**: AI 直接操控用户电脑的能力，包括文件管理、应用控制
 
 ---
 *Last updated: 2026-02-10*

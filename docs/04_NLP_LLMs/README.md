@@ -34,6 +34,23 @@
     └────────────────┘    └───────────────┘
 ```
 
+## 🚀 速成指南 (In-Nutshell Quick Start)
+
+> 面向初级运维人员的入门材料，包含丰富的 Mermaid 图示。
+
+```mermaid
+flowchart LR
+    A[LLM 基础] --> B[Prompt Engineering]
+    B --> C[应用实践...]
+```
+
+| 主题 | 描述 | 速成文档 |
+|------|------|----------|
+| **LLM 基础** | 理解大语言模型：Token、上下文窗口、Temperature、API 调用 | [LLM-Basics-in-nutshell.md](./LLM_Architectures/LLM-Basics-in-nutshell.md) |
+| **Prompt Engineering** | 掌握提示词工程：Zero-shot、Few-shot、CoT、角色扮演 | [Prompt-Engineering-in-nutshell.md](./Prompt_Engineering/Prompt-Engineering-in-nutshell.md) |
+
+---
+
 ## 内容索引 (Content Index)
 
 | 主题 | 难度 | 描述 | 文档链接 |

@@ -45,6 +45,18 @@ RAG 系统 📚       MLOps 流水线 🏭
 
 ## 五个核心主题
 
+### 🦞 OpenClaw 生态 - AI 的手脚
+
+> **生活类比**: 以前的 AI 像谋士，只能给建议；现在的 AI Agent 像管家，能帮你把事情做好！
+
+**你会学到**:
+- OpenClaw 如何让 AI 从“聊天”变成“做事”
+- CoPaw、QClaw、Manus 等生态产品怎么用
+- 如何通过微信远程操控电脑
+- Skills 技能市场怎么扩展 AI 能力
+
+👉 [阅读详细版](./OpenClaw_Ecosystem/OpenClaw_Ecosystem_for_dummy.md)
+
 ### 1️⃣ 模型评估 - AI 的成绩单
 
 > **生活类比**: 就像给学生打分,不能只看数学成绩,还要看语文、体育、品德...
@@ -129,6 +141,10 @@ RAG 系统 📚       MLOps 流水线 🏭
 | **向量数据库** | 存储 AI"理解"的信息 | 超级图书馆的索引系统 |
 | **MLOps** | AI 的生产流水线 | 汽车制造的质量管理体系 |
 | **A/B 测试** | 比较两个方案哪个更好 | 试吃两种配方的蛋糕 |
+| **AI Agent** | 能帮你做事的 AI | 个人管家/助理 |
+| **OpenClaw** | 开源 AI Agent 框架 | AI 助手的操作系统 |
+| **Skills** | AI 的技能扩展 | 手机的 App |
+| **Computer Use** | AI 操控电脑 | 远程桌面 + 智能化 |
 
 ## 常见问题
 
@@ -151,6 +167,7 @@ A: 本地实验可以用 CPU,生产环境推荐 GPU(如 NVIDIA T4/L4)。
 - [RAG 系统 - 小白版](./RAG_Systems/RAG_Systems_for_dummy.md)
 - [MLOps 流水线 - 小白版](./MLOps_Pipeline/MLOps_Pipeline_for_dummy.md)
 - [模型评估 - 小白版](./Model_Evaluation/Model_Evaluation_for_dummy.md)
+- [**OpenClaw 生态 - 小白版**](./OpenClaw_Ecosystem/OpenClaw_Ecosystem_for_dummy.md) 🦞 新！
 
 ### 🔙 回顾前置知识
 - [深度学习基础](../03_Deep_Learning/README_for_dummy.md)
