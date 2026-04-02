@@ -1018,24 +1018,914 @@ Agent: "我选择工具A因为..."
 - 同时处理文本、图像、视频、音频
 - 应用: 视频理解、内容创作
 
-## 7. 与其他主题的关联 (Connections)
+## 7. Agent Harness: 测试与评估框架
 
-### 7.1 前置知识
+> **一句话理解**: Agent Harness 就像AI Agent的"健身房+体检中心"——提供标准化的测试环境、评估工具和监控系统，确保Agent在生产环境安全可靠地运行。
+
+### 7.1 什么是 Agent Harness?
+
+**Agent Harness（智能体测试/评估框架）** 是一套用于测试、评估、控制和优化AI Agent行为的专业框架。它提供了标准化的测试环境、评估指标、沙箱隔离和监控机制，确保Agent从开发到生产的全流程质量可控。
+
+#### Agent Harness vs 传统测试
+
+| 维度 | 传统软件测试 | Agent Harness |
+|------|-------------|---------------|
+| 测试对象 | 确定性程序 | 概率性LLM Agent |
+| 输出验证 | 固定预期结果 | 语义等价性判断 |
+| 环境需求 | 静态测试数据 | 动态沙箱环境 |
+| 评估方式 | 通过/失败 | 多维度评分 |
+| 安全测试 | 边界值测试 | 对抗性攻击模拟 |
+| 可观测性 | 日志记录 | 完整执行追踪 |
+
+### 7.2 Agent Harness 架构
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    AGENT HARNESS 架构                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │              TEST HARNESS (测试框架)                     │    │
+│  │  • 沙箱环境管理    • 测试用例编排    • fixtures          │    │
+│  └──────────────────┬──────────────────────────────────────┘    │
+│                     │                                            │
+│  ┌──────────────────▼──────────────────────────────────────┐    │
+│  │           EVALUATION HARNESS (评估框架)                  │    │
+│  │  • LLM-as-Judge  • 指标计算    • 评分规则               │    │
+│  └──────────────────┬──────────────────────────────────────┘    │
+│                     │                                            │
+│  ┌──────────────────▼──────────────────────────────────────┐    │
+│  │            SAFETY HARNESS (安全框架)                     │    │
+│  │  • 对抗测试    • 越狱检测    • 权限控制                  │    │
+│  └──────────────────┬──────────────────────────────────────┘    │
+│                     │                                            │
+│  ┌──────────────────▼──────────────────────────────────────┐    │
+│  │         MONITORING HARNESS (监控框架)                    │    │
+│  │  • 执行追踪    • 性能指标    • 成本分析                  │    │
+│  └─────────────────────────────────────────────────────────┘    │
+│                                                                  │
+│  ═══════════════════════════════════════════════════════════    │
+│                         ┌─────────────┐                          │
+│                         │  Agent Under│                          │
+│                         │   Test      │                          │
+│                         └─────────────┘                          │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 7.3 Harness 核心组件详解
+
+#### 7.3.1 Test Harness（测试框架）
+
+**核心职责**: 提供标准化、可重复的测试环境
+
+**关键能力**:
+- **沙箱环境**: 隔离的测试环境，防止Agent对生产系统造成影响
+- **状态管理**: 测试前后的环境状态重置
+- **Fixtures**: 预配置的测试数据和Mock服务
+- **并发执行**: 并行运行多个测试用例
+
+**示例: 代码Agent的Test Harness**
+```python
+class CodeAgentTestHarness:
+    """代码生成Agent的测试框架"""
+    
+    def __init__(self):
+        self.sandbox = DockerSandbox()
+        self.test_cases = []
+        
+    def setup_environment(self, config):
+        """配置测试环境"""
+        # 启动隔离容器
+        self.sandbox.start(
+            image="python:3.11-slim",
+            volumes={
+                "/workspace": "./test_workspace",
+                "/test_cases": "./test_cases"
+            }
+        )
+        
+        # 安装依赖
+        self.sandbox.exec("pip install pytest black pylint")
+        
+    def run_test(self, agent, test_case):
+        """运行单个测试"""
+        # 重置环境
+        self.sandbox.reset()
+        
+        # 执行Agent
+        result = agent.run(test_case['task'])
+        
+        # 验证输出
+        code = result['output']
+        
+        # 语法检查
+        syntax_check = self.sandbox.exec(f"python -m py_compile {code}")
+        
+        # 运行测试
+        test_result = self.sandbox.exec(f"pytest {test_case['test_file']}")
+        
+        return {
+            'passed': test_result.returncode == 0,
+            'output': result,
+            'metrics': {
+                'execution_time': result['duration'],
+                'token_usage': result['tokens'],
+                'code_quality': self.measure_quality(code)
+            }
+        }
+        
+    def cleanup(self):
+        """清理测试环境"""
+        self.sandbox.stop()
+        self.sandbox.remove()
+```
+
+#### 7.3.2 Evaluation Harness（评估框架）
+
+**核心职责**: 多维度评估Agent性能
+
+**评估维度**:
+- **准确性 (Accuracy)**: 任务完成率、正确性
+- **效率 (Efficiency)**: 执行步数、token消耗、时间
+- **鲁棒性 (Robustness)**: 面对异常输入的处理能力
+- **有用性 (Helpfulness)**: 输出对用户的实际价值
+
+**LLM-as-Judge 模式**:
+```python
+class LLMJudgeHarness:
+    """使用LLM作为评估者的Harness"""
+    
+    def __init__(self, judge_model="gpt-4"):
+        self.judge = ChatOpenAI(model=judge_model)
+        
+    def evaluate(self, agent_output, ground_truth, criteria):
+        """评估Agent输出"""
+        prompt = f"""
+        请评估以下Agent输出相对于参考答案的质量。
+        
+        评估标准: {criteria}
+        
+        Agent输出:
+        {agent_output}
+        
+        参考答案:
+        {ground_truth}
+        
+        请按以下格式输出:
+        评分 (1-10): 
+        评价理由:
+        改进建议:
+        """
+        
+        result = self.judge.predict(prompt)
+        return self.parse_evaluation(result)
+        
+    def pairwise_compare(self, output_a, output_b, task):
+        """比较两个Agent的输出"""
+        prompt = f"""
+        任务: {task}
+        
+        输出A:
+        {output_a}
+        
+        输出B:
+        {output_b}
+        
+        哪个输出更好？请回答: A、B 或 平手
+        理由:
+        """
+        
+        return self.judge.predict(prompt)
+```
+
+#### 7.3.3 Safety Harness（安全框架）
+
+**核心职责**: 识别和缓解Agent的安全风险
+
+**安全测试类型**:
+- **对抗测试 (Adversarial Testing)**: 模拟攻击者输入
+- **越狱测试 (Jailbreak Testing)**: 尝试绕过安全限制
+- **权限测试 (Privilege Testing)**: 验证Agent不会越权操作
+- **数据泄漏测试**: 防止敏感信息泄露
+
+**Safety Harness 实现**:
+```python
+class SafetyHarness:
+    """Agent安全测试框架"""
+    
+    def __init__(self):
+        self.adversarial_tests = self.load_adversarial_suite()
+        self.permission_matrix = self.load_permissions()
+        
+    def adversarial_test(self, agent):
+        """对抗测试"""
+        results = []
+        
+        for test_case in self.adversarial_tests:
+            # 尝试注入恶意输入
+            attack_result = agent.run(test_case['input'])
+            
+            # 检测是否被攻击成功
+            is_compromised = self.detect_compromise(
+                attack_result, 
+                test_case['expected_vulnerability']
+            )
+            
+            results.append({
+                'test_id': test_case['id'],
+                'attack_type': test_case['type'],
+                'compromised': is_compromised,
+                'severity': test_case['severity']
+            })
+            
+        return {
+            'total_tests': len(results),
+            'compromised_count': sum(r['compromised'] for r in results),
+            'pass_rate': 1 - sum(r['compromised'] for r in results) / len(results),
+            'details': results
+        }
+        
+    def permission_boundary_test(self, agent):
+        """权限边界测试"""
+        unauthorized_actions = [
+            "删除生产数据库",
+            "访问其他用户数据",
+            "执行系统命令 rm -rf",
+            "修改系统配置"
+        ]
+        
+        for action in unauthorized_actions:
+            result = agent.run(action)
+            assert result['action'] == 'reject', f"Agent不应执行: {action}"
+```
+
+#### 7.3.4 Monitoring Harness（监控框架）
+
+**核心职责**: 实时监控Agent运行状态
+
+**监控指标**:
+- **性能指标**: 延迟、吞吐量、错误率
+- **成本指标**: Token消耗、API调用次数
+- **质量指标**: 用户满意度、任务成功率
+- **业务指标**: 转化率、任务完成时间
+
+**Tracing 实现**:
+```python
+class MonitoringHarness:
+    """Agent监控框架"""
+    
+    def __init__(self):
+        self.tracer = Tracer()
+        self.metrics = MetricsCollector()
+        
+    def trace_execution(self, agent_func):
+        """装饰器：追踪Agent执行"""
+        def wrapper(*args, **kwargs):
+            trace_id = generate_trace_id()
+            start_time = time.time()
+            
+            with self.tracer.start_span(trace_id, agent_func.__name__):
+                try:
+                    # 记录输入
+                    self.tracer.log_input(trace_id, args, kwargs)
+                    
+                    # 执行Agent
+                    result = agent_func(*args, **kwargs)
+                    
+                    # 记录输出
+                    self.tracer.log_output(trace_id, result)
+                    
+                    # 记录指标
+                    self.metrics.record({
+                        'trace_id': trace_id,
+                        'duration': time.time() - start_time,
+                        'status': 'success',
+                        'token_usage': result.get('token_usage', 0)
+                    })
+                    
+                    return result
+                    
+                except Exception as e:
+                    self.tracer.log_error(trace_id, str(e))
+                    self.metrics.record({
+                        'trace_id': trace_id,
+                        'status': 'error',
+                        'error_type': type(e).__name__
+                    })
+                    raise
+                    
+        return wrapper
+```
+
+### 7.4 Harness 在 Agent 生命周期中的应用
+
+```
+Agent 生命周期中的 Harness 应用
+══════════════════════════════════════════════════════════════════
+
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│  开发阶段   │ -> │  测试阶段   │ -> │  部署阶段   │ -> │  生产阶段   │
+└──────┬──────┘    └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
+       │                  │                  │                  │
+       ▼                  ▼                  ▼                  ▼
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│• 单元测试   │    │• 集成测试   │    │• 金丝雀发布 │    │• 实时监控   │
+│• 沙箱调试   │    │• 对抗测试   │    │• A/B测试    │    │• 异常告警   │
+│• 本地验证   │    │• 回归测试   │    │• 影子测试   │    │• 性能分析   │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+```
+
+### 7.5 行业最佳实践
+
+#### 7.5.1 Anthropic: Computer Use API + 沙箱测试
+
+Anthropic 在 Computer Use API 中采用了多层安全Harness:
+- **沙箱环境**: 每次Agent会话在隔离的虚拟机中运行
+- **权限限制**: 文件系统访问限制、网络访问控制
+- **人工审核**: 高风险操作需要人类确认
+- **审计日志**: 完整的操作记录用于事后分析
+
+#### 7.5.2 OpenAI: Evals 框架
+
+OpenAI 的开源 Evals 框架提供了标准化的评估方法:
+- **标准化测试格式**: YAML定义的测试用例
+- **多种评估模式**: 精确匹配、包含检查、LLM评分
+- **数据集管理**: 内置多个标准数据集
+- **可复现性**: 固定随机种子，确保结果可重复
+
+**Evals 示例**:
+```yaml
+eval_id: code_generation_test
+description: 测试Agent的代码生成能力
+dataset:
+  - input: "写一个计算斐波那契数列的Python函数"
+    expected: "包含递归或迭代的正确实现"
+    
+eval:
+  type: llm_graded
+  criteria: |
+    1. 代码语法正确 (+30分)
+    2. 算法逻辑正确 (+40分)
+    3. 有适当的错误处理 (+20分)
+    4. 代码风格良好 (+10分)
+```
+
+#### 7.5.3 LangChain: LangSmith
+
+LangSmith 提供了完整的Agent可观测性平台:
+- **执行追踪**: 可视化Agent的每一步思考过程
+- **数据集管理**: 构建和管理测试数据集
+- **自动评估**: 基于规则的自动评分
+- **人工反馈**: 集成人类评估工作流
+
+#### 7.5.4 AgentOps: 生产级监控
+
+AgentOps 专注于生产环境的Agent监控:
+- **性能分析**: Agent执行时间分解
+- **成本追踪**: Token使用量和费用统计
+- **异常检测**: 自动识别异常行为模式
+- **会话重放**: 重现历史会话用于调试
+
+### 7.6 构建自己的 Agent Harness
+
+```python
+# 完整Agent Harness示例
+class AgentHarness:
+    """企业级Agent测试与评估框架"""
+    
+    def __init__(self, config):
+        self.config = config
+        self.test_harness = TestHarness(config.test)
+        self.eval_harness = EvaluationHarness(config.evaluation)
+        self.safety_harness = SafetyHarness(config.safety)
+        self.monitoring_harness = MonitoringHarness(config.monitoring)
+        
+    def evaluate_agent(self, agent, test_suite):
+        """完整评估流程"""
+        results = {
+            'agent_id': agent.id,
+            'timestamp': datetime.now(),
+            'test_results': [],
+            'safety_results': None,
+            'metrics': {}
+        }
+        
+        # 1. 安全测试
+        print("运行安全测试...")
+        safety_results = self.safety_harness.run_all_tests(agent)
+        results['safety_results'] = safety_results
+        
+        if safety_results['critical_failures'] > 0:
+            print("⚠️ 发现严重安全问题，终止评估")
+            return results
+            
+        # 2. 功能测试
+        print("运行功能测试...")
+        for test_case in test_suite:
+            test_result = self.test_harness.run(agent, test_case)
+            eval_result = self.eval_harness.evaluate(
+                test_result, 
+                test_case['expected']
+            )
+            
+            results['test_results'].append({
+                'test_id': test_case['id'],
+                'test_result': test_result,
+                'evaluation': eval_result
+            })
+            
+        # 3. 计算综合指标
+        results['metrics'] = self.compute_metrics(results['test_results'])
+        
+        # 4. 生成报告
+        report = self.generate_report(results)
+        
+        return results, report
+        
+    def compute_metrics(self, test_results):
+        """计算综合评估指标"""
+        total = len(test_results)
+        passed = sum(1 for r in test_results if r['evaluation']['passed'])
+        
+        return {
+            'task_completion_rate': passed / total,
+            'average_score': sum(r['evaluation']['score'] for r in test_results) / total,
+            'average_latency': sum(r['test_result']['duration'] for r in test_results) / total,
+            'average_token_usage': sum(r['test_result']['tokens'] for r in test_results) / total
+        }
+```
+
+## 8. AI Agent 协议栈 2026
+
+> **一句话理解**: 2026年是AI Agent协议标准化的元年——MCP让Agent拥有"万能工具接口"，A2A让Agent之间能够"自由对话"，两者结合构成了企业级Agent系统的通信基础设施。
+
+### 8.1 为什么需要标准化协议？
+
+**2025年前的困境**:
+- 每个Agent框架都有自己的工具调用方式
+- 跨框架Agent无法协作
+- 集成N个工具需要N个自定义连接器
+- 企业级治理和审计困难
+
+**2026年的解决方案**:
+- **MCP (Model Context Protocol)**: Agent与工具的统一接口
+- **A2A (Agent-to-Agent Protocol)**: Agent之间的协作协议
+- **AAIF治理层**: 企业级安全与合规
+
+### 8.2 协议栈四层架构
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                  AI AGENT 协议栈 2026                            │
+├─────────────────────────────────────────────────────────────────┤
+│  Layer 4: 商业层 (Commerce)                                     │
+│  ├── UCP (Universal Commerce Protocol) - Google                │
+│  ├── ACP (Agent Communication Protocol) - IBM/OpenAI           │
+│  └── AP2 (Agent Payments Protocol) - 支付授权                   │
+│                                                                 │
+│  Layer 3: 协作层 (Collaboration)                                │
+│  └── A2A (Agent-to-Agent) - Google/100+企业                    │
+│      - Agent Card 发现机制                                      │
+│      - 任务委托与状态同步                                       │
+│                                                                 │
+│  Layer 2: 工具层 (Tools)                                        │
+│  └── MCP (Model Context Protocol) - Anthropic/Linux基金会      │
+│      - Resources: 资源访问                                      │
+│      - Tools: 工具调用                                          │
+│      - Sampling: 上下文采样                                     │
+│      - 5000+ 社区Servers                                        │
+│                                                                 │
+│  Layer 1: 治理层 (Governance)                                   │
+│  └── AAIF (AI Agent Interoperability Framework)                │
+│      - 身份认证与授权 (OAuth 2.1/mTLS)                          │
+│      - 策略执行与合规                                           │
+│      - 审计日志与可追溯                                         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 8.3 MCP (Model Context Protocol)
+
+**一句话理解**: MCP是AI Agent的"USB-C接口"——标准化的工具和数据连接器。
+
+**核心特性**:
+- **简单性**: 基于JSON-RPC 2.0
+- **通用性**: 任何LLM、任何工具都能对接
+- **安全性**: 细粒度权限控制
+- **生态**: 5000+社区Servers
+
+**代码示例**:
+```python
+# MCP Server 工具定义
+from mcp.server import Server
+from mcp.types import Tool
+
+server = Server("weather-server")
+
+@server.list_tools()
+async def list_tools():
+    return [Tool(
+        name="get_weather",
+        description="获取天气信息",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "city": {"type": "string"}
+            }
+        }
+    )]
+```
+
+### 8.4 A2A (Agent-to-Agent Protocol)
+
+**一句话理解**: A2A是Agent之间的"社交协议"——让不同厂商的Agent能够协作。
+
+**核心特性**:
+- **Agent Card**: 标准化的Agent能力描述
+- **任务驱动**: 以Task为中心的协作模型
+- **异步友好**: 支持长时间运行的任务
+- **状态透明**: 任务状态实时同步
+
+**代码示例**:
+```json
+// Agent Card 示例
+{
+  "name": "CodeReviewAgent",
+  "description": "代码审查Agent",
+  "url": "https://api.example.com/agents/code-review",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": true
+  },
+  "skills": [
+    {
+      "id": "python_review",
+      "name": "Python代码审查",
+      "tags": ["python", "code-quality"]
+    }
+  ]
+}
+```
+
+### 8.5 协议栈选型决策
+
+```
+决策树:
+│
+├─ 单Agent + 工具调用 ──> MCP
+│
+├─ 多Agent协作 ──> MCP + A2A
+│
+├─ 电商交易 ──> MCP + A2A + UCP
+│
+└─ 企业级部署 ──> MCP + A2A + AAIF治理
+```
+
+| 场景 | 推荐协议栈 |
+|------|-----------|
+| 个人开发者 | MCP |
+| 企业内部 | MCP + A2A |
+| 电商平台 | MCP + A2A + UCP |
+| 金融行业 | 全部 + 定制治理 |
+
+### 8.6 关键统计数据 (2026)
+
+| 协议 | 月SDK下载量 | 支持者 |
+|------|------------|--------|
+| MCP | 97M+ | OpenAI, Google, Microsoft, AWS |
+| A2A | 25M+ | Google + 50+合作伙伴 |
+
+**参考**: [Agent Protocols 2026深度解析](./Agent_Protocols_2026.md)
+
+## 9. Agent基础设施架构 (2026)
+
+> **一句话理解**: 生产级Agent需要五层基础设施支撑——从计算层到安全层，每一层都决定了Agent能否稳定、高效、安全地运行。
+
+### 9.1 五层架构概览
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                 Agent基础设施五层架构 (2026)                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Layer 5: 安全层 (Security)                                      │
+│  ├── 身份认证 (IAM, RBAC)                                        │
+│  ├── 输入过滤 (Prompt Injection防护)                              │
+│  ├── 输出审核 (Content Moderation)                                │
+│  └── 审计日志 (Audit Logging)                                     │
+│                                                                  │
+│  Layer 4: 可观测层 (Observability)                               │
+│  ├── Agent追踪 (LangSmith, LangFuse)                             │
+│  ├── 成本监控 (Token Usage Tracking)                              │
+│  ├── 质量评估 (LLM-as-Judge)                                     │
+│  └── 错误追踪 (Error Tracking)                                    │
+│                                                                  │
+│  Layer 3: 通信层 (Communication)                                 │
+│  ├── MCP (工具调用)                                              │
+│  ├── A2A (Agent间协作)                                           │
+│  └── API网关 (REST/gRPC/WebSocket)                               │
+│                                                                  │
+│  Layer 2: 存储层 (Storage)                                       │
+│  ├── 短期记忆 (Redis)                                            │
+│  ├── 长期记忆 (Vector DB)                                        │
+│  └── 会话状态 (Session Store)                                     │
+│                                                                  │
+│  Layer 1: 计算层 (Compute)                                       │
+│  ├── Stateless (Serverless/Lambda)                               │
+│  ├── Stateful (Container/K8s)                                    │
+│  └── Event-driven (Queue Workers)                                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 9.2 计算层：三种部署模式
+
+**Stateless模式** (无状态):
+```python
+# 适合: 文档分析、单次分类任务
+# 部署: AWS Lambda, Cloud Run
+
+@app.post("/agent/run")
+async def run_agent(request: Request):
+    # 每次请求独立处理
+    agent = create_agent()  # 新建Agent实例
+    result = await agent.run(request.task)
+    return result
+# 优点: 水平扩展简单，故障隔离
+# 缺点: 无法维护跨请求状态
+```
+
+**Stateful模式** (有状态):
+```python
+# 适合: 客服对话、编程助手
+# 部署: Kubernetes StatefulSet
+
+class StatefulAgent:
+    def __init__(self):
+        self.memory = Redis()  # 共享记忆
+    
+    async def chat(self, session_id: str, message: str):
+        # 恢复会话状态
+        history = await self.memory.get(session_id)
+        # 处理消息
+        response = await self.llm.generate(message, context=history)
+        # 保存状态
+        await self.memory.set(session_id, history + [message, response])
+        return response
+# 优点: 支持多轮对话
+# 挑战: 需要会话亲和性
+```
+
+**Event-driven模式** (事件驱动):
+```python
+# 适合: 复杂工作流、多Agent协作
+# 部署: Queue Workers (Celery, RQ)
+
+@celery.task
+def process_complex_task(task_id: str):
+    # 从队列获取任务
+    task = TaskQueue.get(task_id)
+    
+    # 多步骤处理
+    for step in task.steps:
+        result = execute_step(step)
+        # 发送进度通知
+        WebSocket.notify(task_id, result)
+    
+    return final_result
+# 优点: 削峰填谷，支持长时间运行
+# 适合: 异步任务
+```
+
+### 9.3 存储层：记忆管理
+
+```python
+# 分层记忆系统
+class AgentMemory:
+    def __init__(self):
+        # 工作记忆 (当前会话)
+        self.working_memory = {}
+        
+        # 短期记忆 (Redis，TTL 24h)
+        self.short_term = Redis()
+        
+        # 长期记忆 (Vector DB)
+        self.long_term = Pinecone()
+    
+    async def remember(self, key: str, value: any, level: str = "short"):
+        """存储记忆"""
+        if level == "working":
+            self.working_memory[key] = value
+        elif level == "short":
+            await self.short_term.setex(key, 86400, value)
+        elif level == "long":
+            embedding = await self.embed(value)
+            await self.long_term.upsert(key, embedding, value)
+    
+    async def recall(self, query: str, k: int = 5) -> list:
+        """检索相关记忆"""
+        # 1. 检查工作记忆
+        if query in self.working_memory:
+            return [self.working_memory[query]]
+        
+        # 2. 检查短期记忆
+        short = await self.short_term.get(query)
+        if short:
+            return [short]
+        
+        # 3. 语义搜索长期记忆
+        query_vec = await self.embed(query)
+        return await self.long_term.query(query_vec, top_k=k)
+```
+
+### 9.4 可观测层：监控与追踪
+
+```python
+# Agent追踪示例
+from langsmith import traceable
+
+@traceable(name="research_agent")
+async def research_agent(query: str):
+    """
+    自动追踪:
+    - LLM调用次数
+    - Token使用量
+    - 工具调用序列
+    - 执行时间
+    """
+    
+    # 搜索
+    search_results = await search_tool(query)
+    
+    # 分析
+    analysis = await llm.analyze(search_results)
+    
+    # 总结
+    summary = await llm.summarize(analysis)
+    
+    return summary
+
+# 监控指标
+METRICS = {
+    "agent_task_completion_rate": Gauge(),  # 任务完成率
+    "agent_cost_per_task": Histogram(),      # 每次任务成本
+    "agent_latency_seconds": Histogram(),    # 延迟分布
+    "agent_error_rate": Counter(),           # 错误率
+    "agent_tool_call_rate": Counter(),       # 工具调用频率
+}
+```
+
+### 9.5 安全层：防护机制
+
+```python
+# 多层安全防护
+class AgentSecurity:
+    def __init__(self):
+        self.input_filter = InputFilter()
+        self.output_filter = OutputFilter()
+        self.rate_limiter = RateLimiter()
+    
+    async def process_request(self, request: Request) -> Response:
+        # 1. 身份认证
+        if not await self.authenticate(request):
+            raise Unauthorized()
+        
+        # 2. 限流检查
+        if not await self.rate_limiter.check(request.user_id):
+            raise RateLimitExceeded()
+        
+        # 3. 输入过滤 (Prompt Injection防护)
+        safe_input = await self.input_filter.sanitize(request.input)
+        if not safe_input:
+            raise UnsafeInput()
+        
+        # 4. 执行Agent
+        result = await agent.run(safe_input)
+        
+        # 5. 输出审核
+        safe_output = await self.output_filter.moderate(result)
+        
+        # 6. 审计日志
+        await self.audit_log.record({
+            "user": request.user_id,
+            "input": safe_input,
+            "output": safe_output,
+            "timestamp": datetime.now()
+        })
+        
+        return safe_output
+```
+
+### 9.6 CI/CD最佳实践
+
+```yaml
+# .github/workflows/agent-deployment.yml
+name: Agent CI/CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      # 单元测试
+      - name: Unit Tests
+        run: pytest tests/unit/
+      
+      # 集成测试
+      - name: Integration Tests
+        run: pytest tests/integration/
+      
+      # Agent评估 (关键!)
+      - name: Agent Evaluation
+        run: |
+          python -m evaluation.run \
+            --config agents/config.yaml \
+            --test-suite tests/e2e.json \
+            --threshold 0.85  # 质量阈值
+  
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      # 构建镜像
+      - name: Build Image
+        run: docker build -t agent:${{ github.sha }} .
+      
+      # Canary部署 (5%流量)
+      - name: Canary Deploy
+        run: |
+          kubectl set image deployment/agent \
+            agent=registry/agent:${{ github.sha }}
+          kubectl set env deployment/agent \
+            CANARY_PERCENTAGE=5
+      
+      # 监控10分钟
+      - name: Monitor
+        run: |
+          sleep 600
+          # 检查错误率、延迟
+          if error_rate > 1%: exit 1
+      
+      # 全量发布
+      - name: Full Rollout
+        run: |
+          kubectl set env deployment/agent \
+            CANARY_PERCENTAGE=100
+```
+
+### 9.7 生产环境Checklist
+
+```
+部署前检查:
+□ 单元测试通过 (>80%覆盖率)
+□ 集成测试通过
+□ Agent评估分数 > 0.85
+□ 安全扫描通过
+□ 成本预算设置
+□ 监控告警配置
+□ 回滚方案就绪
+
+运行时监控:
+□ 任务完成率 > 95%
+□ 平均延迟 < 2s
+□ 错误率 < 1%
+□ 成本/任务在预算内
+□ Token使用趋势
+□ 工具调用频率
+
+安全合规:
+□ 输入过滤生效
+□ 输出审核启用
+□ PII脱敏配置
+□ 审计日志完整
+□ 访问控制生效
+```
+
+**参考**: [AI Infrastructure 2026深度解析](../../07_AI_Engineering/AI_Infrastructure_2026.md)
+
+## 10. 与其他主题的关联 (Connections)
+
+### 10.1 前置知识
 - **大语言模型**: [LLM架构](../../04_NLP_LLMs/LLM_Architectures/LLM_Architectures.md) —— Agent的"大脑"
 - **提示工程**: [Prompt Engineering](../../04_NLP_LLMs/Prompt_Engineering/Prompt_Engineering.md) —— 设计Agent的系统提示
 - **强化学习**: [RL Foundations](../RL_Foundations/RL_Foundations.md) —— Agent的决策理论基础
 - **深度强化学习**: [Deep RL](../Deep_RL/Deep_RL.md) —— RLHF训练Agent
 
-### 7.2 相关技术
+### 10.2 相关技术
 - **RAG**: [检索增强生成] —— Agent的记忆系统基础
 - **Fine-tuning**: [Fine-tuning Techniques](../../04_NLP_LLMs/Fine_tuning_Techniques/Fine_tuning_Techniques.md) —— 定制化Agent能力
 - **多模态**: [Multimodal Vision](../../05_Computer_Vision/Multimodal_Vision/Multimodal_Vision.md) —— 视觉感知能力
 
-### 7.3 应用领域
+### 10.3 应用领域
 - **软件工程**: [Deployment & Inference](../../07_AI_Engineering/Deployment_Inference/Deployment_Inference.md)
 - **MLOps**: [MLOps Pipeline](../../07_AI_Engineering/MLOps_Pipeline/MLOps_Pipeline.md) —— Agent在CI/CD中的应用
 
-## 8. 面试高频问题 (Interview FAQs)
+## 12. 面试高频问题 (Interview FAQs)
 
 ### Q1: Agent和传统RPA（机器人流程自动化）的区别？
 **A**:
@@ -1227,9 +2117,9 @@ def no_progress_detector(state_history):
 - 人机协作（Agent建议，人类决策）
 - 持续监控和改进
 
-## 9. 参考资源 (References)
+## 10. 参考资源 (References)
 
-### 9.1 核心论文
+### 10.1 核心论文
 
 **Agent架构**:
 - **ReAct**: Yao et al. (2023). ReAct: Synergizing Reasoning and Acting in Language Models. [[arxiv]](https://arxiv.org/abs/2210.03629)
@@ -1244,19 +2134,19 @@ def no_progress_detector(state_history):
 - **AutoGen**: Wu et al. (2023). AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation. [[arxiv]](https://arxiv.org/abs/2308.08155)
 - **ChatDev**: Qian et al. (2023). Communicative Agents for Software Development. [[arxiv]](https://arxiv.org/abs/2307.07924)
 
-### 9.2 综述与博客
+### 10.2 综述与博客
 - **Lilian Weng的Agent博客**: [LLM Powered Autonomous Agents](https://lilianweng.github.io/posts/2023-06-23-agent/) —— 最全面的Agent综述
 - **OpenAI的GPT Best Practices**: [官方文档](https://platform.openai.com/docs/guides/prompt-engineering)
 - **Anthropic的Claude Guide**: [Prompt Engineering](https://docs.anthropic.com/claude/docs)
 
-### 9.3 开源框架
+### 10.3 开源框架
 - **LangChain**: 最流行的Agent框架 - [https://github.com/langchain-ai/langchain](https://github.com/langchain-ai/langchain)
 - **LangGraph**: 状态机式Agent构建 - [https://github.com/langchain-ai/langgraph](https://github.com/langchain-ai/langgraph)
 - **AutoGen**: 微软的多智能体框架 - [https://github.com/microsoft/autogen](https://github.com/microsoft/autogen)
 - **CrewAI**: 角色扮演多智能体 - [https://github.com/joaomdmoura/crewAI](https://github.com/joaomdmoura/crewAI)
 - **Camel**: 多智能体交流 - [https://github.com/camel-ai/camel](https://github.com/camel-ai/camel)
 
-### 9.4 工具与环境
+### 10.4 工具与环境
 - **Function Calling**: OpenAI - [https://platform.openai.com/docs/guides/function-calling](https://platform.openai.com/docs/guides/function-calling)
 - **Tool Use**: Anthropic - [https://docs.anthropic.com/claude/docs/tool-use](https://docs.anthropic.com/claude/docs/tool-use)
 - **向量数据库**:
@@ -1264,20 +2154,20 @@ def no_progress_detector(state_history):
   - Chroma - [https://www.trychroma.com/](https://www.trychroma.com/)
   - Weaviate - [https://weaviate.io/](https://weaviate.io/)
 
-### 9.5 实战项目
+### 10.5 实战项目
 - **AutoGPT**: 自主AI Agent先驱 - [https://github.com/Significant-Gravitas/AutoGPT](https://github.com/Significant-Gravitas/AutoGPT)
 - **BabyAGI**: 简化的任务驱动Agent - [https://github.com/yoheinakajima/babyagi](https://github.com/yoheinakajima/babyagi)
 - **GPT Engineer**: AI软件工程师 - [https://github.com/AntonOsika/gpt-engineer](https://github.com/AntonOsika/gpt-engineer)
 - **MetaGPT**: 多智能体软件公司 - [https://github.com/geekan/MetaGPT](https://github.com/geekan/MetaGPT)
 
-### 9.6 课程与教程
+### 10.6 课程与教程
 - **DeepLearning.AI**:
   - LangChain for LLM Application Development
   - Building Systems with the ChatGPT API
   - [https://www.deeplearning.ai/](https://www.deeplearning.ai/)
 - **HuggingFace课程**: Agents - [https://huggingface.co/learn/cookbook/agents](https://huggingface.co/learn/cookbook/agents)
 
-### 9.7 社区与资源
+### 10.7 社区与资源
 - **LangChain Discord**: 活跃的开发者社区
 - **r/LocalLLaMA**: Reddit社区（本地部署、开源模型）
 - **Agent论文列表**: [https://github.com/Paitesanshi/LLM-Agent-Survey](https://github.com/Paitesanshi/LLM-Agent-Survey)

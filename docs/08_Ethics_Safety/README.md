@@ -26,6 +26,7 @@
 |------|------|------|---------|
 | 价值对齐 (Value Alignment) | 进阶 | RLHF、DPO、奖励建模，让 AI 输出符合人类偏好 | [Value_Alignment.md](./Value_Alignment/Value_Alignment.md) |
 | AI 安全与红队 (AI Safety & Red Teaming) | 实战 | 对抗样本、提示词注入、越狱攻击、安全护栏，防御恶意使用 | [AI_Safety_RedTeaming.md](./AI_Safety_RedTeaming/AI_Safety_RedTeaming.md) |
+| AI安全 2026 (AI Security 2026) | 实战 | OWASP LLM Top 10 + ASI Agentic AI安全框架，生产级防御 | [AI_Security_2026.md](./AI_Security_2026/AI_Security_2026.md) |
 
 ## 前置知识 (Prerequisites)
 

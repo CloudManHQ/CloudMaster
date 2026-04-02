@@ -34,9 +34,11 @@
 | 概率论与统计 (Probability & Statistics) | 入门 | 贝叶斯定理、高斯分布、信息论，处理 AI 中的不确定性 | [Probability_Statistics.md](./Probability_Statistics/Probability_Statistics.md) |
 | 数据结构与算法 (Data Structures & Algorithms) | 进阶 | 计算图、拓扑排序、向量索引，支撑自动微分与高效检索 | [Data_Structures_Algorithms.md](./Data_Structures_Algorithms/Data_Structures_Algorithms.md) |
 | 分布式系统 (Distributed Systems) | 进阶 | All-Reduce、并行策略、ZeRO 优化，实现大规模模型训练 | [Distributed_Systems.md](./Distributed_Systems/Distributed_Systems.md) |
+| AI硬件与芯片 (AI Hardware) | 进阶 | H100/H200/B200对比，GPU选型，边缘AI芯片，2026年硬件格局 | [AI_Hardware_2026.md](./AI_Hardware/AI_Hardware_2026.md) |
 
 ## 前置知识 (Prerequisites)
 
+- **AI历史了解**: 推荐先阅读 [AI历史时间线](../00_AI_Introduction/AI_History_Timeline.md) 了解1950-2026 AI发展脉络
 - **数学**: 高中微积分、基础矩阵运算
 - **编程**: Python 基础、NumPy 库基本操作
 - **无 AI 前序要求**: 本章是整个知识体系的起点

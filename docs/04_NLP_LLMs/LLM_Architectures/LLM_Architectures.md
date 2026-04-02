@@ -18,6 +18,7 @@
 2023: LLaMA 开源, GPT-4 多模态, Claude 2, Llama 2
 2024: Gemini 1.5 (1M context), Mixtral 8x22B (MoE)
 2025: DeepSeek-V3, Qwen 2.5, Llama 3.x 持续演进
+2026: GPT-5.2, Claude 4.5, Gemini 3, Llama 4, 推理模型 + Agent 架构成为主流
 ```
 
 ### 三大核心架构范式
@@ -81,17 +82,24 @@ Input: "The cat sat on"
 - **Causal Mask**: 位置 i 只能看到位置 ≤ i 的内容
 - **自回归生成**: 逐个生成 token,前一个的输出作为后一个的输入
 
-### 2.2 主流 LLM 特性对比矩阵
+### 2.2 主流 LLM 特性对比矩阵 (2026年更新)
 
-| 模型 | 参数量 | 架构 | 上下文长度 | 特色技术 | 开源情况 | 训练语料 |
+| 模型 | 参数量 | 架构 | 上下文长度 | 特色技术 | 开源情况 | 适用场景 |
 |------|--------|------|----------|---------|---------|---------|
-| **GPT-4** | ~1.76T (MoE 推测) | Decoder-only | 128K | MoE, Multimodal | ❌ 闭源 | 未公开 |
-| **Claude 3 Opus** | 未公开 | Decoder-only | 200K | Constitutional AI | ❌ 闭源 | 未公开 |
-| **Gemini 1.5 Pro** | 未公开 | Decoder-only | 1M | Multimodal, Long Context | ❌ 闭源 | 未公开 |
-| **LLaMA 3.1 405B** | 405B | Decoder-only | 128K | GQA, RoPE | ✅ 开源 | 15T tokens |
-| **Qwen 2.5 72B** | 72B | Decoder-only | 128K | GQA, Dual Chunk Attn | ✅ 开源 | 18T tokens (中文优化) |
-| **DeepSeek-V3** | 671B (37B 激活) | MoE | 128K | Multi-Token Prediction | ✅ 开源 | 14.8T tokens |
-| **Mixtral 8x22B** | 141B (39B 激活) | MoE | 64K | Top-2 Routing | ✅ 开源 | 未公开 |
+| **GPT-5.2 Pro** | ~2T (MoE) | Decoder-only | 200K | Dynamic Reasoning, Multimodal | ❌ 闭源 | 复杂推理、代码生成、研究 |
+| **Claude 4.5 Opus** | 未公开 | Decoder-only | 1M | Hybrid Reasoning, Extended Thinking | ❌ 闭源 | 企业级安全、代码架构 |
+| **Gemini 3 Pro** | 未公开 | Sparse MoE | 1M | Native Multimodal, Federated Learning | ❌ 闭源 | 长文档分析、视频理解 |
+| **Llama 4 Scout** | 109B (17B激活) | Dense | **10M** | Ultra-Long Context, IRoPE | ✅ 开源 | 大规模数据处理、RAG |
+| **Llama 4 Maverick** | 400B (17B激活) | MoE | 1M | MoE Routing, Multilingual | ✅ 开源 | 通用对话、代码生成 |
+| **DeepSeek-V3.2** | 671B (37B激活) | MoE | 256K | MTP, FP8训练 | ✅ 开源 | 数学推理、中文场景 |
+| **Kimi K2** | 1T (32B激活) | MoE | 256K | 100 Mini-Agents并行 | ✅ 开源 | 长文本、复杂研究 |
+| **Qwen 3 72B** | 72B | Dense | 128K | Multilingual, CodeQwen | ✅ 开源 | 多语言、中文优化 |
+
+**2026年趋势**: 
+- **推理模型成为标配**: GPT-5.2、Claude 4.5、Gemini 3均支持动态深度思考
+- **上下文窗口竞赛**: Llama 4 Scout达1000万token，可处理整代码库
+- **MoE架构普及**: 主流开源模型均采用MoE，推理成本降低5-10倍
+- **Agent原生设计**: 模型内置工具调用、多轮规划能力
 
 **参数量说明**:
 - **Dense 模型**: 所有参数都参与计算 (如 LLaMA)
@@ -209,6 +217,84 @@ $$
 **实际意义**:
 - 可预测不同配置的最终性能
 - 指导计算资源分配 (更大模型 vs 更多数据)
+
+---
+
+### 2.5 2026年模型架构新趋势
+
+#### 推理模型 (Reasoning Models) - 架构新范式
+
+2026年最大变革：**模型不再是"一次性"生成答案，而是能够进行多步思考**。
+
+```
+传统模型: 输入 → [模型] → 输出
+                  ↓
+推理模型: 输入 → [思考链] → [验证] → [再思考] → 输出
+                  ↑_________|←_________|
+                    (可配置迭代次数)
+```
+
+**代表模型特性**:
+
+| 模型 | 推理模式 | 特点 |
+|------|----------|------|
+| **GPT-5.2** | Dynamic Reasoning | 自动判断思考深度，简单问题快速回答，复杂问题深度推理 |
+| **Claude 4.5** | Extended Thinking | 显式"思考模式"开关，用户控制思考预算 |
+| **Gemini 3** | Thinking Model | 动态分配计算资源到推理路径 |
+| **DeepSeek-R1** | Pure RL Reasoning | 纯强化学习训练的思维链 |
+
+**技术实现**:
+- 训练时加入 **Chain-of-Thought (CoT)** 数据
+- 推理时使用 **Test-Time Compute Scaling** - 投入更多计算换取更好答案
+- **Self-Consistency**: 多次采样，投票选出最佳答案
+
+#### 超长上下文架构 (Million-Token Context)
+
+Llama 4 Scout 实现 **1000万 token** 上下文的架构创新：
+
+```
+传统 Attention: O(n²) 复杂度 → 1M token = 计算爆炸
+
+Llama 4 方案:
+1. 分层注意力: Local (4K) + Global (压缩表征)
+2. 渐进式编码: 早期层处理细粒度，深层处理粗粒度
+3. IRoPE (Interleaved RoPE): 位置编码外推到10M
+```
+
+**应用场景**:
+- 整代码库分析 (大型项目)
+- 长篇小说理解与生成
+- 多文档法律合同审查
+
+#### 多模态原生架构
+
+2026年模型不再是"文本+视觉适配器"，而是**真正的多模态原生**：
+
+```
+传统架构: 图像 → [ViT] → 视觉token → [文本LLM] → 输出
+                                ↑ 后期拼接
+
+2026架构:  文本token ──┐
+                       ├──→ [统一Transformer] → 输出
+          图像patch ───┤     (所有模态早期融合)
+          音频帧 ──────┘
+```
+
+**Gemini 3 / GPT-4o 架构特点**:
+- 任何模态都可以作为输入或输出
+- 模态间无缝转换 (文本描述图像 → 图像生成 → 视频生成)
+- 统一Tokenizer处理文本和图像token
+
+#### Agent原生架构支持
+
+2026年模型内置Agent能力，无需额外框架：
+
+| 能力 | 传统实现 | 2026原生支持 |
+|------|----------|-------------|
+| 工具调用 | 通过Prompt工程 | 专门Tool-Use训练数据 |
+| 规划能力 | 外部Planner | 内置Multi-Step Planning |
+| 记忆管理 | 外部Vector DB | 内置Long-term Memory机制 |
+| 代码执行 | 沙箱环境 | 内置Code Interpreter模式 |
 
 ---
 
@@ -599,9 +685,10 @@ FLOPs ≈ 6 × N × D
 - [GQA: Training Generalized Multi-Query Attention](https://arxiv.org/abs/2305.13245)
 
 ### 开源模型
-- [LLaMA 3.1](https://github.com/meta-llama/llama-models)
-- [Qwen 2.5](https://github.com/QwenLM/Qwen2.5)
-- [DeepSeek-V3](https://github.com/deepseek-ai/DeepSeek-V3)
+- [LLaMA 4](https://github.com/meta-llama/llama-models) - 2026年发布，支持10M上下文
+- [Qwen 3](https://github.com/QwenLM/Qwen3) - 阿里巴巴最新多语言模型
+- [DeepSeek-V3](https://github.com/deepseek-ai/DeepSeek-V3) - MoE架构，高性价比
+- [Kimi K2](https://github.com/MoonshotAI/Kimi-K2) - 1T参数MoE模型
 - [Mixtral](https://huggingface.co/mistralai/Mixtral-8x22B-v0.1)
 
 ### 教程与工具
@@ -615,4 +702,4 @@ FLOPs ≈ 6 × N × D
 
 ---
 
-*Last updated: 2026-02-10*
+*Last updated: 2026-04-01* (Added 2026 model updates: GPT-5.2, Claude 4.5, Gemini 3, Llama 4)

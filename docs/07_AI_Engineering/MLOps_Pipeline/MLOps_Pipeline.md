@@ -386,7 +386,318 @@ A/B 测试架构:
 
 ---
 
-## 7. 与其他主题的关联 (Connections)
+## 7. LLMOps 2026 最佳实践
+
+> **一句话理解**: LLMOps是MLOps的"大模型升级版"——不仅关注模型训练和部署，更强调提示词版本控制、语义缓存、智能路由和Agent编排。
+
+### 7.1 MLOps vs LLMOps 对比
+
+| 维度 | 传统MLOps | LLMOps (2026) |
+|------|----------|---------------|
+| **版本控制** | 代码 + 数据 + 模型 | + 提示词 + RAG文档 + Agent配置 |
+| **评估方式** | 准确率、F1、AUC | 语义评估、人工反馈、LLM-as-Judge |
+| **推理优化** | 批处理、模型量化 | 连续批处理、FP8、投机解码 |
+| **成本优化** | 模型压缩、蒸馏 | 智能路由、语义缓存、多层级优化 |
+| **监控重点** | 数据漂移、概念漂移 | Token使用、延迟、幻觉检测 |
+| **部署单元** | 单个模型 | 模型 + 提示 + 工具 + Agent |
+
+### 7.2 三层缓存架构
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   LLMOps 三层缓存架构                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Layer 3: 精确匹配缓存 (L1)                                   │
+│  ├── 存储: Redis/Memory                                      │
+│  ├── 键: 哈希(完整提示)                                       │
+│  ├── 延迟: <1ms                                              │
+│  └── 节省: 10-20%                                            │
+│                                                              │
+│  Layer 2: 语义缓存 (L2)                                       │
+│  ├── 存储: Vector DB + Redis                                 │
+│  ├── 相似度: >0.95 (Cosine)                                  │
+│  ├── 延迟: 5-10ms                                            │
+│  └── 节省: 30-50%                                            │
+│                                                              │
+│  Layer 1: LLM调用 (L3)                                        │
+│  ├── 实际请求LLM API                                          │
+│  ├── 延迟: 100-500ms                                         │
+│  └── 成本: 基准                                               │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+
+总节省: 40-70% (典型工作负载)
+```
+
+**语义缓存实现**:
+```python
+class SemanticCache:
+    def __init__(self):
+        self.redis = Redis()
+        self.vector_db = Pinecone()
+        self.embeddings = OpenAIEmbeddings()
+    
+    async def get(self, query: str) -> Optional[str]:
+        # L1: 精确匹配
+        cache_key = hash(query)
+        if cached := await self.redis.get(cache_key):
+            return cached
+        
+        # L2: 语义匹配
+        query_vec = await self.embeddings.embed(query)
+        similar = await self.vector_db.query(
+            query_vec, 
+            top_k=1,
+            threshold=0.95
+        )
+        
+        if similar:
+            return similar[0].response
+        return None
+    
+    async def set(self, query: str, response: str):
+        # 存储到L1和L2
+        await self.redis.set(hash(query), response, ex=3600)
+        
+        query_vec = await self.embeddings.embed(query)
+        await self.vector_db.upsert(
+            id=hash(query),
+            vector=query_vec,
+            metadata={"response": response}
+        )
+```
+
+### 7.3 智能路由与成本优化
+
+**路由策略**:
+```python
+class LLMRouter:
+    def __init__(self):
+        self.models = {
+            "gpt-4o-mini": {"cost": 0.15, "strength": "simple"},
+            "gpt-4o": {"cost": 5.0, "strength": "complex"},
+            "claude-haiku": {"cost": 0.25, "strength": "simple"},
+        }
+    
+    async def route(self, query: str, context: dict) -> str:
+        # 基于复杂度路由
+        complexity = await self._classify_complexity(query)
+        
+        if complexity == "simple":
+            return "gpt-4o-mini"  # 节省90%成本
+        elif complexity == "medium":
+            return "claude-haiku"
+        else:
+            return "gpt-4o"
+    
+    async def _classify_complexity(self, query: str) -> str:
+        # 简单启发式规则
+        if len(query) < 100 and not any(kw in query for kw in ["代码", "分析", "推理"]):
+            return "simple"
+        elif "```" in query or len(query) > 500:
+            return "complex"
+        return "medium"
+```
+
+**级联路由 (Cascading)**:
+```python
+async def cascade_route(query: str) -> Response:
+    """先尝试便宜模型，不满意再升级"""
+    
+    # Tier 1: 便宜模型
+    response = await call("gpt-4o-mini", query)
+    confidence = await evaluate_quality(response)
+    
+    if confidence > 0.8:
+        return response  # 省钱！
+    
+    # Tier 2: 升级模型
+    return await call("gpt-4o", query)
+```
+
+**成本优化效果**:
+| 策略 | 节省比例 | 实现复杂度 |
+|------|---------|-----------|
+| 智能路由 | 40-70% | 低 |
+| 语义缓存 | 40-50% | 中 |
+| 提示压缩 | 20-30% | 低 |
+| **组合使用** | **70-90%** | 中 |
+
+### 7.4 LLM评估与CI/CD
+
+**语义评估流水线**:
+```yaml
+# .github/workflows/llm-evaluation.yml
+name: LLM Evaluation
+
+on:
+  push:
+    paths:
+      - 'prompts/**'
+      - 'configs/**'
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      # 运行语义评估
+      - name: Semantic Evaluation
+        run: |
+          python -m evaluation.evaluate \
+            --test-suite tests/golden_set.json \
+            --metrics bleu,rouge,llm_judge \
+            --threshold 0.85
+      
+      # 幻觉检测
+      - name: Hallucination Check
+        run: |
+          python -m evaluation.hallucination_detection \
+            --sample-size 100 \
+            --max-hallucination-rate 0.05
+      
+      # 成本基准测试
+      - name: Cost Benchmark
+        run: |
+          python -m evaluation.cost_benchmark \
+            --max-cost-per-request 0.01
+```
+
+**LLM-as-Judge评估**:
+```python
+async def llm_judge_evaluate(prediction: str, ground_truth: str) -> dict:
+    """使用LLM作为评估器"""
+    
+    prompt = f"""
+    请评估以下预测结果与标准答案的一致性。
+    
+    标准答案: {ground_truth}
+    预测结果: {prediction}
+    
+    请输出:
+    1. 一致性评分 (0-10)
+    2. 评估理由
+    3. 改进建议
+    """
+    
+    response = await llm.generate(prompt)
+    
+    return {
+        "score": parse_score(response),
+        "reasoning": response.reasoning,
+        "passed": score >= 7.0
+    }
+```
+
+### 7.5 Prompt版本控制
+
+```
+prompts/
+├── system/
+│   ├── v1.0.0/
+│   │   └── customer_service.txt    # 初始版本
+│   ├── v1.1.0/
+│   │   └── customer_service.txt    # 添加了退货政策
+│   └── v2.0.0/
+│       └── customer_service.txt    # 重构提示结构
+│
+└── user/
+    ├── v1.0.0/
+    └── v1.1.0/
+```
+
+**版本管理代码**:
+```python
+from pathlib import Path
+
+class PromptRegistry:
+    def __init__(self, prompts_dir: str):
+        self.prompts_dir = Path(prompts_dir)
+    
+    def load(self, name: str, version: str) -> str:
+        prompt_path = self.prompts_dir / name / version / "prompt.txt"
+        return prompt_path.read_text()
+    
+    def list_versions(self, name: str) -> list:
+        prompt_dir = self.prompts_dir / name
+        return sorted([d.name for d in prompt_dir.iterdir() if d.is_dir()])
+    
+    def compare_versions(self, name: str, v1: str, v2: str) -> dict:
+        """对比两个版本的差异"""
+        p1 = self.load(name, v1)
+        p2 = self.load(name, v2)
+        return {
+            "added": len(set(p2.split()) - set(p1.split())),
+            "removed": len(set(p1.split()) - set(p2.split())),
+        }
+```
+
+### 7.6 Agent编排与监控
+
+**Agent编排**:
+```python
+# 多Agent工作流编排
+class AgentOrchestrator:
+    def __init__(self):
+        self.agents = {
+            "research": ResearchAgent(),
+            "writer": WriterAgent(),
+            "reviewer": ReviewerAgent()
+        }
+    
+    async def execute_workflow(self, task: str) -> str:
+        # 研究
+        research_result = await self.agents["research"].run(task)
+        
+        # 写作
+        draft = await self.agents["writer"].run(research_result)
+        
+        # 审核
+        final = await self.agents["reviewer"].run(draft)
+        
+        return final
+```
+
+**可观测性**:
+```python
+# Agent追踪
+@traceable(name="research_agent")
+async def research_agent(query: str):
+    # 自动追踪:
+    # - LLM调用次数
+    # - Token使用量
+    # - 工具调用序列
+    # - 执行时间
+    pass
+
+# 监控指标
+METRICS = {
+    "llm_cost_per_request": Histogram(),
+    "llm_latency_seconds": Histogram(),
+    "token_usage_total": Counter(),
+    "cache_hit_rate": Gauge(),
+    "routing_accuracy": Gauge(),
+}
+```
+
+### 7.7 LLMOps工具链 (2026)
+
+| 类别 | 工具 | 用途 |
+|------|------|------|
+| **Prompt管理** | Langfuse, Promptlayer | 版本控制、A/B测试 |
+| **评估** | TruLens, Ragas, Arize | 语义评估、幻觉检测 |
+| **路由** | LiteLLM, Bifrost | 智能路由、成本控制 |
+| **缓存** | Redis, LangCache | 语义缓存 |
+| **观测** | LangSmith, Langfuse | Agent追踪、成本监控 |
+| **网关** | Portkey, Kong AI | 统一入口、治理 |
+
+**参考**: [AI Infrastructure 2026](../AI_Infrastructure_2026.md)
+
+---
+
+## 8. 与其他主题的关联 (Connections)
 
 ### 前置知识
 - [监督学习](../../02_Machine_Learning/Supervised_Learning/Supervised_Learning.md) — 理解模型训练流程
@@ -400,7 +711,7 @@ A/B 测试架构:
 
 ---
 
-## 8. 面试高频问题 (Interview FAQs)
+## 9. 面试高频问题 (Interview FAQs)
 
 **Q1: MLOps 和 DevOps 的核心区别是什么？**
 > MLOps 除了代码版本控制外，还需要管理数据版本、模型版本和实验元数据。此外，ML 系统的"构建"不仅是编译代码，而是训练模型——这个过程是非确定性的。ML 系统还面临独特挑战：数据漂移、概念漂移、训练-服务偏差等。
@@ -419,7 +730,7 @@ A/B 测试架构:
 
 ---
 
-## 9. 参考资源 (References)
+## 10. 参考资源 (References)
 
 ### 经典文献
 - [Hidden Technical Debt in Machine Learning Systems (Sculley et al., 2015)](https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html) — ML 系统技术债务的经典论文
@@ -438,4 +749,5 @@ A/B 测试架构:
 - [Full Stack Deep Learning](https://fullstackdeeplearning.com/) — ML 工程化最佳实践
 
 ---
-*Last updated: 2026-02-10*
+*Last updated: 2026-04-01*
+*Version: 2.0.0 - LLMOps Update*

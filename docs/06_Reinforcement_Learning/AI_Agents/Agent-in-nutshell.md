@@ -673,6 +673,71 @@ flowchart TB
 
 ---
 
+## 🤝 Agent协议速成 (2026)
+
+> **一句话**: MCP让Agent有"手"(工具)，A2A让Agent有"同事"(协作)。
+
+### MCP vs A2A 速览
+
+| 维度 | MCP | A2A |
+|------|-----|-----|
+| **作用** | Agent ↔ 工具 | Agent ↔ Agent |
+| **发起方** | Anthropic | Google |
+| **核心概念** | Tools/Resources | Agent Card/Task |
+| **使用场景** | 调用API/数据库 | 多Agent协作 |
+
+### 快速决策
+
+```
+你的需求:
+│
+├─ 需要调用外部工具(API/数据库)? ──> 用 MCP
+│
+└─ 需要多个Agent协作? ──> 用 A2A
+   └─ 同时需要工具? ──> MCP + A2A 一起用
+```
+
+### MCP Server 最小示例
+
+```python
+from mcp.server import Server
+from mcp.types import Tool, TextContent
+
+server = Server("my-server")
+
+@server.list_tools()
+async def list_tools():
+    return [Tool(
+        name="calculate",
+        description="计算表达式",
+        inputSchema={"type": "object", "properties": {
+            "expr": {"type": "string"}
+        }}
+    )]
+
+@server.call_tool()
+async def call_tool(name, arguments):
+    if name == "calculate":
+        result = eval(arguments["expr"])
+        return [TextContent(type="text", text=str(result))]
+```
+
+### A2A Agent Card 最小示例
+
+```json
+{
+  "name": "MyAgent",
+  "description": "我的Agent",
+  "url": "https://api.example.com/agent",
+  "capabilities": {"streaming": true},
+  "skills": [{"id": "skill1", "name": "技能1"}]
+}
+```
+
+**详细文档**: [Agent Protocols 2026](./Agent_Protocols_2026.md)
+
+---
+
 ## 🔗 相关主题
 
 - [RAG](../../07_AI_Engineering/RAG_Systems/RAG-in-nutshell.md) - 带知识检索的智能体

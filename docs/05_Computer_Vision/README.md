@@ -37,6 +37,7 @@
 | 图像分割 (Segmentation) | 进阶 | 语义分割（U-Net）、实例分割（Mask R-CNN），像素级理解 | [Segmentation/](./Segmentation/) |
 | 多模态视觉 (Multimodal Vision) | 进阶 | CLIP、ALIGN，视觉-语言联合表示学习 | [Multimodal_Vision/](./Multimodal_Vision/) |
 | 生成模型 (Generative Models) | 实战 | GAN、DDPM、Stable Diffusion，图像生成与编辑 | [Generative_Models.md](./Generative_Models/Generative_Models.md) |
+| AI视频生成 (Video Generation) | 前沿 | 2026年视频生成格局，Veo3/Kling/Seedance/Sora后时代 | [Video_Generation_2026.md](./Video_Generation/Video_Generation_2026.md) |
 
 ## 前置知识 (Prerequisites)
 

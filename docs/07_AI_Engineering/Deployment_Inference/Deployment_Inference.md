@@ -358,21 +358,361 @@ print(tokenizer.decode(outputs[0]))
 
 ## 6. 进阶话题 (Advanced Topics)
 
-### 6.1 推理引擎深度对比
+### 6.1 推理引擎深度对比 (2026更新)
 
-| 引擎 | 开发者 | 核心技术 | 适用模型 | 推理速度 | 易用性 |
-|------|--------|---------|---------|---------|--------|
-| **vLLM** | UC Berkeley | PagedAttention | LLM (GPT/Llama/Mistral) | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **TGI** | Hugging Face | Continuous Batching | 通用 Transformers | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **TensorRT-LLM** | NVIDIA | 层融合+FP8 | NVIDIA GPU 优化 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **Triton** | NVIDIA | 多模型/多框架 | 所有模型 | ⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **Ollama** | 社区 | llama.cpp封装 | Llama系列 | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+#### 2026年推理引擎格局
 
-**选型建议**:
-- **生产环境高性能**: TensorRT-LLM（需要模型转换专业知识）
-- **快速原型开发**: vLLM 或 TGI（开箱即用）
-- **本地/边缘部署**: Ollama 或 llama.cpp
-- **多模型混合部署**: Triton Inference Server
+2026年LLM推理引擎格局发生了显著变化，SGLang成为新的性能领导者，TGI进入维护模式。
+
+| 引擎 | 开发者 | 核心技术 | 2026状态 | H100吞吐量 | 易用性 |
+|------|--------|---------|---------|-----------|--------|
+| **SGLang** | LMSYS | RadixAttention | ⭐ 活跃开发 | **16,215 tok/s** | ⭐⭐⭐⭐ |
+| **vLLM** | UC Berkeley | PagedAttention | ⭐ 活跃开发 | 12,553 tok/s | ⭐⭐⭐⭐⭐ |
+| **TensorRT-LLM** | NVIDIA | 层融合+FP8 | ⭐ 活跃开发 | 10,000+ tok/s | ⭐⭐⭐ |
+| **LMDeploy** | 社区 | TurboMind | ⭐ 活跃开发 | 16,132 tok/s | ⭐⭐⭐⭐ |
+| **TGI** | Hugging Face | Continuous Batching | ⚠️ 维护模式 | ~9,500 tok/s | ⭐⭐⭐⭐⭐ |
+| **llama.cpp** | 社区 | GGUF量化 | ⭐ 活跃开发 | ~6,000 tok/s | ⭐⭐⭐⭐⭐ |
+
+*测试配置: H100-80GB, Llama 3.1 8B Instruct, 1000 ShareGPT prompts*
+
+**关键发现 (2026)**:
+1. **SGLang领先**: 在相同kernel上比vLLM快29%，瓶颈在编排而非计算
+2. **TensorRT-LLM**: 单请求低延迟场景最强，但高并发下表现下降
+3. **TGI冻结**: 建议新项目考虑迁移到vLLM或SGLang
+4. **vLLM稳健**: 生态最丰富，文档最完善，仍是通用首选
+
+#### 选型建议 (2026)
+
+| 场景 | 推荐引擎 | 理由 |
+|------|---------|------|
+| **通用生产环境** | vLLM | 生态最成熟，文档完善，社区活跃 |
+| **极致性能** | SGLang | 吞吐量最高，多轮对话优化好 |
+| **NVIDIA深度优化** | TensorRT-LLM | 单请求延迟最低，FP8支持好 |
+| **Agent/RAG工作流** | SGLang | RadixAttention对共享前缀优化好 |
+| **快速原型** | vLLM/SGLang | 开箱即用，OpenAI兼容API |
+| **边缘/本地部署** | llama.cpp/Ollama | CPU优化好，量化支持丰富 |
+
+#### SGLang详解
+
+**核心特性**:
+- **RadixAttention**: 自动前缀缓存，对多轮对话和RAG场景优化显著
+- **零开销CPU调度器**: 减少GPU空闲时间
+- **结构化输出原生支持**: JSON、约束解码内置
+- **多LoRA批处理**: 同时服务多个微调模型
+
+**代码示例**:
+```python
+# SGLang启动服务器
+# python -m sglang.launch_server --model-path meta-llama/Llama-3.1-8B-Instruct --port 30000
+
+# OpenAI兼容客户端
+from openai import OpenAI
+
+client = OpenAI(base_url="http://localhost:30000/v1", api_key="not-needed")
+
+response = client.chat.completions.create(
+    model="default",
+    messages=[{"role": "user", "content": "Hello!"}],
+    temperature=0.7
+)
+```
+
+**最佳场景**:
+- 聊天机器人和多轮对话
+- RAG流水线（共享上下文前缀）
+- 需要结构化输出的Agent系统
+- 高吞吐量在线服务
+
+#### vLLM vs SGLang对比
+
+| 特性 | SGLang | vLLM |
+|------|--------|------|
+| **吞吐量** | 领先29% | 行业标准 |
+| **多轮对话** | RadixAttention优化 | APC支持 |
+| **模型支持** | 主流LLM/VLM | 最广，新模型支持最快 |
+| **易用性** | 配置简单 | 文档最完善 |
+| **生态** | 快速增长 | 最成熟 |
+| **推测解码** | EAGLE/EAGLE3 | EAGLE/Medusa/n-gram |
+
+**迁移建议**:
+- 现有vLLM用户无需急于迁移，vLLM仍是稳健选择
+- 新项目追求极致性能可考虑SGLang
+- 使用OpenAI兼容API可实现无缝切换（仅需改base_url）
+
+### 6.2 FP8精度：2026年新标准
+
+**为什么FP8成为新标准**:
+- **H100原生支持**: 1.3 PFLOPS FP8计算能力
+- **几乎无损**: 质量保留>99%，速度提升30%+
+- **显存节省**: 相比FP16减少50%显存占用
+
+**量化方案对比 (2026)**:
+
+| 精度 | 显存节省 | 速度提升 | 质量保留 | 适用场景 |
+|------|---------|---------|---------|----------|
+| **FP8** | 50% | 30%+ | >99% | ⭐ Hopper GPU首选 |
+| **INT8** | 50% | 20% | 98% | 通用加速 |
+| **AWQ 4-bit** | 75% | 25% | 95% | 保精度压缩 |
+| **GPTQ 4-bit** | 75% | 25% | 90% | 极致压缩 |
+| **GGUF Q5_K_M** | 68% | - | 98% | CPU推理 |
+
+**FP8配置示例 (vLLM)**:
+```python
+from vllm import LLM, SamplingParams
+
+llm = LLM(
+    model="meta-llama/Llama-3.1-70B",
+    tensor_parallel_size=4,
+    quantization="fp8",           # FP8量化
+    kv_cache_dtype="fp8",         # KV Cache也用FP8
+    gpu_memory_utilization=0.95,
+    enable_chunked_prefill=True,
+    enable_prefix_caching=True,
+)
+```
+
+**FP8配置示例 (TensorRT-LLM)**:
+```python
+# build时指定FP8
+python build.py --gpt_model_config=llama-3.1-70b \
+    --precision=fp8 \
+    --quant_mode=fp8 \
+    --use_fp8_context_fmha
+```
+
+### 6.3 FlashAttention-3优化
+
+**FlashAttention-3核心改进**:
+- **异步Tensor Core + TMA**: 重叠计算和数据传输
+- **交错matmul和softmax**: 提高流水线效率
+- **块量化FP8**: 支持FP8精度训练推理
+
+**性能数据** (Hopper GPU):
+| 模式 | 计算能力 | 利用率 |
+|------|---------|--------|
+| BF16 | 840 TFLOPS | 85% |
+| **FP8** | **1.3 PFLOPS** | **87%** |
+
+**内存节省**: 序列长度线性增长而非平方增长
+- 2K长度: 10x节省
+- 4K长度: 20x节省
+- 8K长度: 40x节省
+
+**启用FlashAttention-3**:
+```python
+# vLLM自动检测Hopper GPU并启用FA3
+# 手动启用:
+llm = LLM(
+    model="...",
+    attention_backend="FLASH_ATTN_3",  # 指定后端
+)
+```
+
+### 6.4 AI Gateway架构设计
+
+**什么是AI Gateway**:
+AI Gateway是位于应用和LLM之间的控制层，负责请求路由、成本优化、安全治理和可观测性。
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      AI Gateway 架构                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌─────────────┐    ┌──────────────────────────────────────┐   │
+│  │   应用层     │───►│          AI Gateway                  │   │
+│  │  (客户端)   │    │  ┌─────────────┐  ┌─────────────┐   │   │
+│  └─────────────┘    │  │   Router    │  │    Cache    │   │   │
+│                     │  │  (路由)     │  │  (语义缓存)  │   │   │
+│                     │  └──────┬──────┘  └──────┬──────┘   │   │
+│                     │         │                │          │   │
+│                     │  ┌──────┴────────────────┴──────┐   │   │
+│                     │  │      Policy Engine           │   │   │
+│                     │  │   (策略引擎: 成本/安全/合规)   │   │   │
+│                     │  └──────┬────────────────┬──────┘   │   │
+│                     │         │                │          │   │
+│                     │  ┌──────┴─────┐    ┌─────┴──────┐   │   │
+│                     │  │ Rate Limit │    │   Meter    │   │   │
+│                     │  │ (限流)     │    │ (计量计费)  │   │   │
+│                     │  └────────────┘    └────────────┘   │   │
+│                     └──────────┬──────────────────────────┘   │
+│                                │                                │
+│                     ┌──────────┼──────────┐                    │
+│                     ▼          ▼          ▼                    │
+│                 ┌──────┐  ┌──────┐  ┌────────┐                │
+│                 │OpenAI│  │Anthro│  │Azure  │                │
+│                 └──────┘  └──────┘  └────────┘                │
+│                     │          │          │                    │
+│                 ┌───┴──┐  ┌───┴──┐  ┌───────┴──┐             │
+│                 │Self- │  │Self- │  │ 本地模型  │             │
+│                 │hosted│  │hosted│  └──────────┘             │
+│                 └──────┘  └──────┘                           │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**AI Gateway核心功能**:
+
+1. **智能路由 (Intelligent Routing)**:
+   - 基于查询复杂度选择模型
+   - 成本优化路由（简单查询→便宜模型）
+   - 地理位置路由（选择最近的数据中心）
+
+2. **语义缓存 (Semantic Caching)**:
+   - 缓存相似语义的响应
+   - 典型节省: 40-50%成本
+   - 延迟降低: 缓存命中<10ms
+
+3. **Fallback机制**:
+   - 自动故障转移
+   - 多供应商备份
+   - 零停机切换
+
+4. **治理与安全**:
+   - 内容过滤和审核
+   - PII检测和脱敏
+   - 提示词注入防护
+
+**开源AI Gateway方案 (2026)**:
+
+| 方案 | 特点 | 适用场景 |
+|------|------|----------|
+| **LiteLLM Proxy** | 100+模型统一接口，开源 | 多供应商管理 |
+| **Bifrost** | Rust编写，11μs延迟 | 高性能网关 |
+| **Portkey** | 企业级观测性 | 生产环境 |
+| **Kong AI Gateway** | API网关集成 | 已有Kong基础设施 |
+
+**LiteLLM配置示例**:
+```yaml
+# litellm_config.yaml
+model_list:
+  - model_name: gpt-4
+    litellm_params:
+      model: openai/gpt-4
+      api_key: os.environ/OPENAI_API_KEY
+  
+  - model_name: gpt-4o-mini
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_key: os.environ/OPENAI_API_KEY
+
+router_settings:
+  routing_strategy: cost-based  # 成本优先路由
+  
+cache:
+  type: redis
+  host: localhost
+  port: 6379
+```
+
+### 6.5 LLM路由和成本优化策略
+
+**三层成本优化架构**:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  LLM成本优化三层架构                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Layer 3: 智能路由 (Intelligent Routing)                     │
+│  ├── 查询复杂度分类 → 简单查询→便宜模型                       │
+│  ├── 级联路由: 先尝试便宜模型，不满意再升级                   │
+│  └── 典型节省: 40-70%                                        │
+│                                                              │
+│  Layer 2: 语义缓存 (Semantic Caching)                        │
+│  ├── 精确匹配缓存                                            │
+│  ├── 语义相似缓存 (向量相似度>0.9)                           │
+│  └── 典型节省: 40-50%                                        │
+│                                                              │
+│  Layer 1: 提示压缩 (Prompt Compression)                      │
+│  ├── 移除冗余上下文                                          │
+│  ├── 摘要长文档                                              │
+│  └── 典型节省: 20-30%                                        │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**1. 查询复杂度分类路由**:
+
+```python
+# 基于规则的路由
+class QueryRouter:
+    def route(self, query: str, context: dict) -> str:
+        # 简单查询特征
+        if len(query) < 100 and not any(kw in query for kw in ["代码", "分析", "推理"]):
+            return "gpt-4o-mini"  # $0.15/1M tokens
+        
+        # 代码相关
+        if "```" in query or "代码" in query:
+            return "gpt-4o"  # $5/1M tokens
+        
+        # 复杂推理
+        if any(kw in query for kw in ["分析", "推理", "证明"]):
+            return "gpt-4o"  # 最强模型
+        
+        return "gpt-4o-mini"  # 默认便宜模型
+```
+
+**2. 级联路由 (Cascading Router)**:
+
+```python
+# 先尝试便宜模型，不满意再升级
+class CascadingRouter:
+    async def route_with_fallback(self, query: str) -> Response:
+        # 第1层: 尝试便宜模型
+        cheap_response = await call_model("gpt-4o-mini", query)
+        
+        # 评估响应质量
+        confidence = await evaluate_quality(cheap_response)
+        
+        if confidence > 0.8:
+            return cheap_response  # 省钱！
+        
+        # 第2层: 升级到强模型
+        return await call_model("gpt-4o", query)
+```
+
+**3. 语义缓存实现**:
+
+```python
+# Semantic Cache with Redis + Vector DB
+class SemanticCache:
+    def __init__(self):
+        self.redis = Redis()
+        self.embeddings = OpenAIEmbeddings()
+    
+    async def get(self, query: str) -> Optional[str]:
+        # 生成查询向量
+        query_vec = await self.embeddings.embed(query)
+        
+        # 搜索相似缓存
+        similar = await self.vector_db.similarity_search(
+            query_vec, 
+            threshold=0.95  # 95%相似度阈值
+        )
+        
+        if similar:
+            return similar[0].response  # 缓存命中！
+        return None
+    
+    async def set(self, query: str, response: str):
+        query_vec = await self.embeddings.embed(query)
+        await self.vector_db.store(query_vec, response)
+```
+
+**成本优化效果**:
+
+| 策略 | 节省比例 | 实现复杂度 | 延迟影响 |
+|------|---------|-----------|----------|
+| 智能路由 | 40-70% | 低 | <1ms |
+| 语义缓存 | 40-50% | 中 | +5-10ms |
+| 提示压缩 | 20-30% | 低 | +10-50ms |
+| **组合使用** | **70-90%** | 中 | +15-60ms |
+
+**监控指标**:
+- 路由分布: 各模型使用比例
+- 缓存命中率: 目标>30%
+- 每次请求成本: 按功能/用户追踪
+- 质量分数: 确保成本降低不影响质量
 
 ### 6.2 模型蒸馏 (Knowledge Distillation)
 
@@ -399,13 +739,43 @@ L = α × L_hard(y_true, y_student) + (1-α) × L_soft(y_teacher, y_student)
 4. **Warm-up 不足**: 首次推理包含模型加载时间，需预热
 5. **网络瓶颈**: 跨机器推理时，序列化/反序列化开销可能超过推理时间
 
-### 6.4 前沿方向
+### 6.6 前沿方向 (2026)
 
-- **Flash Attention 3**: 进一步优化 Attention 计算效率
-- **Multi-Query Attention (MQA)**: 减少 KV Cache 尺寸
-- **FP8 训练+推理**: H100 GPU 原生支持，速度提升 2 倍
-- **混合专家模型 (MoE) 推理**: Mixtral-8x7B 的高效推理策略
-- **长上下文优化**: 百万 token 上下文的推理加速
+#### 已成熟的技术 (Production Ready)
+
+- **FP8精度推理**: H100/H200原生支持，成为新默认标准
+- **FlashAttention-3**: Hopper GPU优化，1.3 PFLOPS计算能力
+- **SGLang RadixAttention**: 前缀缓存自动管理，多轮对话优化
+- **AI Gateway**: 智能路由、语义缓存成为生产标配
+- **Continuous Batching**: vLLM/TGI/SGLang全面支持
+
+#### 快速发展中 (Early Adoption)
+
+- **Prefill-Decode Disaggregation**: 分离预填充和解码阶段，独立扩缩容
+- **投机解码优化**: EAGLE3达到2-3x加速比
+- **Multi-LoRA Serving**: 单个实例服务数千微调模型
+- **结构化输出原生支持**: JSON Schema约束解码
+
+#### 研究前沿 (Research)
+
+- **百万Token上下文**: 长文档处理优化
+- **MoE模型推理**: 专家并行和负载均衡
+- **动态量化**: 运行时精度调整
+- **边缘LLM**: 手机/IoT设备本地大模型
+
+#### 硬件趋势
+
+| 硬件 | 显存带宽 | FP8性能 | 适用场景 |
+|------|---------|---------|----------|
+| **H200** | 4.8 TB/s | 1.4x H100 | 高吞吐量首选 |
+| **H100** | 3.35 TB/s | 1.3 PFLOPS | 主流生产环境 |
+| **L40S** | 0.86 TB/s | 支持 | 性价比选择 |
+| **B200** (2024) | 8 TB/s | 2.2x H100 | 下一代旗舰 |
+
+**H200性能提升**:
+- 内存带宽比H100高1.4x
+- 推理吞吐量提升40-90%
+- 价格已正常化（$3-4/小时）
 
 ## 7. 与其他主题的关联 (Connections)
 
@@ -485,12 +855,27 @@ L = α × L_hard(y_true, y_student) + (1-α) × L_soft(y_teacher, y_student)
 
 ### 开源项目
 
-- [vLLM](https://github.com/vllm-project/vllm) - PagedAttention 推理引擎
-- [Text Generation Inference (TGI)](https://github.com/huggingface/text-generation-inference) - Hugging Face 推理服务
-- [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM) - NVIDIA 官方 LLM 推理加速
-- [llama.cpp](https://github.com/ggerganov/llama.cpp) - CPU 推理引擎
+**推理引擎**:
+- [vLLM](https://github.com/vllm-project/vllm) - PagedAttention 推理引擎，行业标准
+- [SGLang](https://github.com/sgl-project/sglang) - 2026新性能领导者，RadixAttention
+- [Text Generation Inference (TGI)](https://github.com/huggingface/text-generation-inference) - Hugging Face推理（维护模式）
+- [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM) - NVIDIA官方LLM推理加速
+- [LMDeploy](https://github.com/InternLM/lmdeploy) -  TurboMind推理引擎
+
+**本地/边缘部署**:
+- [llama.cpp](https://github.com/ggerganov/llama.cpp) - CPU推理引擎，GGUF格式
 - [Ollama](https://github.com/ollama/ollama) - 本地模型部署工具
+
+**量化与优化**:
 - [bitsandbytes](https://github.com/TimDettmers/bitsandbytes) - 量化训练与推理库
+- [AutoAWQ](https://github.com/casper-hansen/AutoAWQ) - AWQ量化自动化
+- [GPTQ-for-LLaMa](https://github.com/qwopqwop200/GPTQ-for-LLaMa) - GPTQ量化实现
+
+**AI Gateway**:
+- [LiteLLM Proxy](https://github.com/BerriAI/litellm) - 多供应商统一接口
+- [Bifrost](https://github.com/bifrost) - 高性能Rust网关
+- [Portkey](https://portkey.ai/) - 企业级AI网关
+- [Kong AI Gateway](https://konghq.com/products/kong-ai-gateway) - API网关集成
 
 ### 教程与文档
 
@@ -507,4 +892,5 @@ L = α × L_hard(y_true, y_student) + (1-α) × L_soft(y_teacher, y_student)
 
 ---
 
-*Last updated: 2026-02-10*
+*Last updated: 2026-04-01*
+*Version: 2.0.0 - 2026 AI Infra Update*

@@ -952,8 +952,1007 @@ Ready to evaluate! Start with: ./run_evaluation.py --agent-id <id> --type quick
 
 ---
 
+## 7. Agent Harness 基础设施与实现
+
+> **核心目标**: 构建企业级Agent Harness基础设施，支持从开发到生产的全流程测试与评估。
+
+### 7.1 Harness 基础设施架构
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                   AGENT HARNESS 基础设施架构                             │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│   ┌─────────────────────────────────────────────────────────────────┐   │
+│   │                     KUBERNETES CLUSTER                           │   │
+│   │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │   │
+│   │  │  Harness    │  │   Agent     │  │  Monitor    │             │   │
+│   │  │  Controller │  │   Sandbox   │  │  & Logs     │             │   │
+│   │  │  (API + UI) │  │  (隔离运行)  │  │  (可观测性)  │             │   │
+│   │  └─────────────┘  └─────────────┘  └─────────────┘             │   │
+│   │         │               │               │                      │   │
+│   │         └───────────────┼───────────────┘                      │   │
+│   │                         │                                       │   │
+│   │  ┌──────────────────────┴────────────────────────┐             │   │
+│   │  │              NETWORK POLICIES                  │             │   │
+│   │  │  • 命名空间隔离  • 网络策略  • 出口控制          │             │   │
+│   │  └────────────────────────────────────────────────┘             │   │
+│   └─────────────────────────────────────────────────────────────────┘   │
+│                                                                          │
+│   ┌─────────────────────────────────────────────────────────────────┐   │
+│   │                      DATA LAYER                                  │   │
+│   │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │   │
+│   │  │ TimescaleDB │  │    Redis    │  │  Object     │             │   │
+│   │  │  (Metrics)  │  │  (Session)  │  │  Storage    │             │   │
+│   │  └─────────────┘  └─────────────┘  └─────────────┘             │   │
+│   └─────────────────────────────────────────────────────────────────┘   │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### 7.2 容器化沙箱环境
+
+#### 7.2.1 Dockerfile 模板
+
+```dockerfile
+# Dockerfile.agent-sandbox
+# Agent沙箱基础镜像
+
+FROM python:3.11-slim
+
+# 安全：创建非root用户
+RUN groupadd -r agentuser && useradd -r -g agentuser agentuser
+
+# 安装基础工具
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# 安装Python依赖
+COPY requirements.txt /tmp/
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+# 创建工作目录
+WORKDIR /workspace
+RUN chown agentuser:agentuser /workspace
+
+# 安全：限制权限
+USER agentuser
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=3s \
+    CMD python -c "print('healthy')" || exit 1
+
+# 默认命令
+CMD ["python", "-c", "while True: import time; time.sleep(60)"]
+```
+
+#### 7.2.2 Kubernetes 部署配置
+
+```yaml
+# k8s/harness-sandbox.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-sandbox-pool
+  namespace: agent-harness
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: agent-sandbox
+  template:
+    metadata:
+      labels:
+        app: agent-sandbox
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: sandbox
+        image: agent-sandbox:latest
+        resources:
+          limits:
+            cpu: "1"
+            memory: "2Gi"
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: workspace
+          mountPath: /workspace
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: workspace
+        emptyDir:
+          sizeLimit: 500Mi
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sandbox-network-policy
+  namespace: agent-harness
+spec:
+  podSelector:
+    matchLabels:
+      app: agent-sandbox
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: harness-controller
+    ports:
+    - protocol: TCP
+      port: 8080
+  egress:
+  # 仅允许访问特定外部服务
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: agent-harness
+  - to:
+    - ipBlock:
+        cidr: 8.8.8.8/32  # 允许DNS
+    ports:
+    - protocol: UDP
+      port: 53
+```
+
+### 7.3 Harness 配置管理
+
+#### 7.3.1 分层配置结构
+
+```yaml
+# config/harness-config.yaml
+harness:
+  version: "2.0.0"
+  
+  # 全局配置
+  global:
+    environment: "production"
+    log_level: "INFO"
+    metrics_enabled: true
+    
+  # 沙箱配置
+  sandbox:
+    type: "kubernetes"
+    namespace: "agent-harness"
+    image: "agent-sandbox:latest"
+    resources:
+      cpu_limit: "1"
+      memory_limit: "2Gi"
+      storage_limit: "5Gi"
+    network:
+      mode: "restricted"
+      allowed_hosts:
+        - "api.openai.com"
+        - "api.anthropic.com"
+      blocked_hosts:
+        - "*.internal.company.com"
+    security:
+      run_as_non_root: true
+      read_only_root_fs: true
+      seccomp_profile: "RuntimeDefault"
+      
+  # 评估配置
+  evaluation:
+    models:
+      judge_model: "gpt-4"
+      fallback_model: "gpt-3.5-turbo"
+    criteria:
+      accuracy:
+        weight: 0.3
+        threshold: 0.8
+      efficiency:
+        weight: 0.2
+        threshold: 0.7
+      safety:
+        weight: 0.3
+        threshold: 0.95
+      helpfulness:
+        weight: 0.2
+        threshold: 0.75
+        
+  # 测试套件配置
+  test_suites:
+    devops:
+      path: "./suites/devops.yaml"
+      timeout: 300
+      parallel: 4
+    code_generation:
+      path: "./suites/code_generation.yaml"
+      timeout: 180
+      parallel: 2
+    safety:
+      path: "./suites/safety.yaml"
+      timeout: 120
+      parallel: 1  # 串行执行
+      
+  # 监控配置
+  monitoring:
+    tracing:
+      enabled: true
+      backend: "jaeger"
+      sample_rate: 1.0
+    metrics:
+      enabled: true
+      backend: "prometheus"
+      push_interval: 30
+    alerting:
+      enabled: true
+      channels:
+        - type: "slack"
+          webhook: "${SLACK_WEBHOOK_URL}"
+        - type: "pagerduty"
+          key: "${PAGERDUTY_KEY}"
+```
+
+#### 7.3.2 环境特定配置覆盖
+
+```python
+# harness/config_loader.py
+"""
+分层配置加载器
+支持：默认值 -> 环境配置 -> 本地覆盖
+"""
+
+from pathlib import Path
+from typing import Dict, Any
+import yaml
+import os
+
+class HarnessConfigLoader:
+    """Harness配置加载器"""
+    
+    def __init__(self, config_dir: str = "./config"):
+        self.config_dir = Path(config_dir)
+        self.env = os.getenv("HARNESS_ENV", "development")
+        
+    def load(self) -> Dict[str, Any]:
+        """加载完整配置"""
+        # 1. 加载默认配置
+        config = self._load_yaml(self.config_dir / "harness-config.yaml")
+        
+        # 2. 加载环境特定配置
+        env_config_path = self.config_dir / f"harness-config.{self.env}.yaml"
+        if env_config_path.exists():
+            env_config = self._load_yaml(env_config_path)
+            config = self._deep_merge(config, env_config)
+            
+        # 3. 加载本地覆盖（gitignored）
+        local_config_path = self.config_dir / "harness-config.local.yaml"
+        if local_config_path.exists():
+            local_config = self._load_yaml(local_config_path)
+            config = self._deep_merge(config, local_config)
+            
+        # 4. 应用环境变量覆盖
+        config = self._apply_env_overrides(config)
+        
+        return config
+        
+    def _load_yaml(self, path: Path) -> Dict:
+        """加载YAML文件"""
+        with open(path, 'r') as f:
+            return yaml.safe_load(f)
+            
+    def _deep_merge(self, base: Dict, override: Dict) -> Dict:
+        """深度合并配置"""
+        result = base.copy()
+        for key, value in override.items():
+            if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+                result[key] = self._deep_merge(result[key], value)
+            else:
+                result[key] = value
+        return result
+        
+    def _apply_env_overrides(self, config: Dict) -> Dict:
+        """应用环境变量覆盖"""
+        # HARNESS__SANDBOX__RESOURCES__CPU_LIMIT -> config['sandbox']['resources']['cpu_limit']
+        for key, value in os.environ.items():
+            if key.startswith("HARNESS__"):
+                path = key.replace("HARNESS__", "").lower().split("__")
+                self._set_nested_value(config, path, value)
+        return config
+        
+    def _set_nested_value(self, config: Dict, path: list, value: Any):
+        """设置嵌套值"""
+        for key in path[:-1]:
+            config = config.setdefault(key, {})
+        config[path[-1]] = value
+
+# 使用示例
+loader = HarnessConfigLoader()
+config = loader.load()
+print(f"Sandbox image: {config['sandbox']['image']}")
+print(f"Judge model: {config['evaluation']['models']['judge_model']}")
+```
+
+### 7.4 CI/CD 集成
+
+#### 7.4.1 GitHub Actions 完整工作流
+
+```yaml
+# .github/workflows/agent-harness.yml
+name: Agent Harness Evaluation
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 2 * * 1'  # 每周一凌晨2点
+  workflow_dispatch:
+    inputs:
+      agent_id:
+        description: 'Agent ID to evaluate'
+        required: true
+      evaluation_type:
+        description: 'Evaluation type'
+        type: choice
+        options:
+          - quick
+          - standard
+          - comprehensive
+        default: 'standard'
+      test_suites:
+        description: 'Test suites to run (comma-separated)'
+        default: 'devops,code_generation,safety'
+
+env:
+  HARNESS_VERSION: "2.0.0"
+  KUBECONFIG: ${{ secrets.KUBECONFIG }}
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      harness_id: ${{ steps.init.outputs.harness_id }}
+      config_hash: ${{ steps.config.outputs.hash }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Harness CLI
+        run: |
+          curl -sSL https://install.agent-harness.io | bash
+          harness --version
+          
+      - name: Initialize Harness Environment
+        id: init
+        run: |
+          HARNESS_ID=$(harness env create \
+            --name "ci-${{ github.run_id }}" \
+            --config ./config/harness-config.ci.yaml \
+            --output json | jq -r '.id')
+          echo "harness_id=$HARNESS_ID" >> $GITHUB_OUTPUT
+          
+      - name: Cache Configuration Hash
+        id: config
+        run: |
+          HASH=$(find ./config -type f -exec md5sum {} \; | sort | md5sum | cut -d' ' -f1)
+          echo "hash=$HASH" >> $GITHUB_OUTPUT
+
+  build-sandbox:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ needs.setup.outputs.config_hash }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+            
+      - name: Build Sandbox Image
+        run: |
+          docker buildx build \
+            --file ./sandbox/Dockerfile.agent-sandbox \
+            --tag agent-sandbox:${{ github.sha }} \
+            --tag agent-sandbox:latest \
+            --cache-from type=local,src=/tmp/.buildx-cache \
+            --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
+            --load \
+            ./sandbox
+            
+      - name: Push to Registry
+        run: |
+          echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login \
+            ${{ secrets.REGISTRY_URL }} -u ${{ secrets.REGISTRY_USER }} --password-stdin
+          docker tag agent-sandbox:${{ github.sha }} \
+            ${{ secrets.REGISTRY_URL }}/agent-sandbox:${{ github.sha }}
+          docker push ${{ secrets.REGISTRY_URL }}/agent-sandbox:${{ github.sha }}
+
+  run-tests:
+    runs-on: ubuntu-latest
+    needs: [setup, build-sandbox]
+    strategy:
+      matrix:
+        test_suite: ${{ fromJson(format('[{0}]', inputs.test_suites || 'devops,code_generation,safety')) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Harness CLI
+        run: |
+          curl -sSL https://install.agent-harness.io | bash
+          
+      - name: Configure Kubernetes
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
+          kubectl config use-context ci-cluster
+          
+      - name: Run Test Suite
+        id: run_tests
+        run: |
+          harness test run \
+            --env-id ${{ needs.setup.outputs.harness_id }} \
+            --suite ${{ matrix.test_suite }} \
+            --agent-id "${{ inputs.agent_id || github.sha }}" \
+            --parallel 4 \
+            --output junit \
+            --output-file ./results/${{ matrix.test_suite }}.xml
+            
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.test_suite }}
+          path: ./results/${{ matrix.test_suite }}.xml
+          
+      - name: Upload Traces
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: traces-${{ matrix.test_suite }}
+          path: ./traces/
+
+  safety-scan:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Safety Scan
+        run: |
+          harness security scan \
+            --env-id ${{ needs.setup.outputs.harness_id }} \
+            --agent-id "${{ inputs.agent_id || github.sha }}" \
+            --suite full \
+            --output sarif \
+            --output-file ./safety-results.sarif
+            
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: ./safety-results.sarif
+
+  analyze:
+    runs-on: ubuntu-latest
+    needs: [run-tests, safety-scan]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download All Results
+        uses: actions/download-artifact@v4
+        with:
+          path: ./results
+          pattern: test-results-*
+          
+      - name: Generate Report
+        run: |
+          harness report generate \
+            --results ./results/ \
+            --template comprehensive \
+            --output ./evaluation-report.html
+            
+      - name: Publish Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation-report
+          path: ./evaluation-report.html
+          
+      - name: Post to PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('./summary.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: [run-tests, safety-scan, analyze]
+    if: always()
+    steps:
+      - name: Cleanup Harness Environment
+        run: |
+          harness env delete --id ${{ needs.setup.outputs.harness_id }} --force
+```
+
+### 7.5 监控与可观测性
+
+#### 7.5.1 OpenTelemetry 集成
+
+```python
+# harness/telemetry.py
+"""
+Agent Harness 遥测系统
+集成 OpenTelemetry 实现全链路追踪
+"""
+
+from opentelemetry import trace, metrics
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.exporter.prometheus import PrometheusMetricReader
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from functools import wraps
+import time
+
+class HarnessTelemetry:
+    """Harness遥测管理器"""
+    
+    def __init__(self, config: dict):
+        self.config = config
+        self.resource = Resource.create({
+            "service.name": "agent-harness",
+            "service.version": config.get("version", "2.0.0"),
+            "deployment.environment": config.get("environment", "production")
+        })
+        
+        # 初始化Tracer
+        self._setup_tracing()
+        
+        # 初始化Metrics
+        self._setup_metrics()
+        
+        # 自动埋点
+        RequestsInstrumentor().instrument()
+        
+    def _setup_tracing(self):
+        """配置分布式追踪"""
+        provider = TracerProvider(resource=self.resource)
+        
+        # OTLP导出到Jaeger
+        otlp_exporter = OTLPSpanExporter(
+            endpoint=self.config.get("jaeger_endpoint", "http://jaeger:4317"),
+            insecure=True
+        )
+        
+        provider.add_span_processor(
+            BatchSpanProcessor(otlp_exporter)
+        )
+        
+        trace.set_tracer_provider(provider)
+        self.tracer = trace.get_tracer(__name__)
+        
+    def _setup_metrics(self):
+        """配置指标收集"""
+        reader = PrometheusMetricReader()
+        provider = MeterProvider(resource=self.resource, metric_readers=[reader])
+        metrics.set_meter_provider(provider)
+        self.meter = metrics.get_meter(__name__)
+        
+        # 定义指标
+        self.test_counter = self.meter.create_counter(
+            "harness.tests.total",
+            description="Total number of tests run"
+        )
+        
+        self.test_duration = self.meter.create_histogram(
+            "harness.tests.duration",
+            description="Test execution duration",
+            unit="s"
+        )
+        
+        self.token_usage = self.meter.create_histogram(
+            "harness.tokens.used",
+            description="Token usage per test",
+            unit="1"
+        )
+        
+        self.safety_score = self.meter.create_gauge(
+            "harness.safety.score",
+            description="Current safety score"
+        )
+        
+    def trace_test(self, func):
+        """测试方法追踪装饰器"""
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            with self.tracer.start_as_current_span(
+                f"test.{func.__name__}",
+                attributes={
+                    "test.function": func.__name__,
+                    "test.module": func.__module__
+                }
+            ) as span:
+                start_time = time.time()
+                try:
+                    result = func(*args, **kwargs)
+                    span.set_attribute("test.status", "passed")
+                    return result
+                except Exception as e:
+                    span.set_attribute("test.status", "failed")
+                    span.set_attribute("test.error", str(e))
+                    span.record_exception(e)
+                    raise
+                finally:
+                    duration = time.time() - start_time
+                    self.test_duration.record(duration)
+                    span.set_attribute("test.duration_ms", duration * 1000)
+        return wrapper
+        
+    def record_test_result(self, test_id: str, status: str, metrics: dict):
+        """记录测试结果"""
+        self.test_counter.add(1, {"status": status})
+        
+        if "token_usage" in metrics:
+            self.token_usage.record(
+                metrics["token_usage"],
+                {"test_id": test_id}
+            )
+            
+    def record_safety_scan(self, score: float, findings: list):
+        """记录安全扫描结果"""
+        self.safety_score.set(score)
+        
+        with self.tracer.start_as_current_span("safety.scan") as span:
+            span.set_attribute("safety.score", score)
+            span.set_attribute("safety.findings_count", len(findings))
+            for i, finding in enumerate(findings):
+                span.set_attribute(f"safety.finding.{i}.severity", finding.get("severity"))
+                span.set_attribute(f"safety.finding.{i}.type", finding.get("type"))
+
+# 使用示例
+telemetry = HarnessTelemetry(config={
+    "jaeger_endpoint": "http://jaeger:4317",
+    "environment": "production"
+})
+
+class MyTestSuite:
+    @telemetry.trace_test
+    def test_code_generation(self, agent):
+        result = agent.run("Generate Python code")
+        telemetry.record_test_result(
+            "CODE-001",
+            "passed",
+            {"token_usage": result["tokens"]}
+        )
+        return result
+```
+
+#### 7.5.2 Prometheus 指标导出
+
+```yaml
+# config/prometheus-rules.yml
+groups:
+  - name: agent_harness
+    rules:
+      - alert: HarnessTestFailureRateHigh
+        expr: |
+          (
+            sum(rate(harness_tests_total{status="failed"}[5m]))
+            /
+            sum(rate(harness_tests_total[5m]))
+          ) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High test failure rate in Agent Harness"
+          description: "Test failure rate is above 10%"
+          
+      - alert: HarnessSafetyScoreDrop
+        expr: |
+          harness_safety_score < 0.9
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Agent safety score dropped below threshold"
+          description: "Current safety score: {{ $value }}"
+          
+      - alert: HarnessTestDurationHigh
+        expr: |
+          histogram_quantile(0.95, 
+            sum(rate(harness_tests_duration_bucket[5m])) by (le)
+          ) > 60
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Test execution time is high"
+          description: "P95 test duration is above 60s"
+```
+
+### 7.6 生产级 Agent Harness 完整实现
+
+```python
+# agent_harness/production.py
+"""
+生产级 Agent Harness 实现
+企业级功能：多租户、RBAC、审计日志、高可用
+"""
+
+from typing import Optional, List, Dict
+from datetime import datetime
+from enum import Enum
+import hashlib
+import json
+from dataclasses import dataclass, asdict
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+
+class TenantIsolation(Enum):
+    NAMESPACE = "namespace"
+    CLUSTER = "cluster"
+    VPC = "vpc"
+
+@dataclass
+class Tenant:
+    """租户定义"""
+    id: str
+    name: str
+    isolation_level: TenantIsolation
+    resource_quota: Dict
+    allowed_models: List[str]
+    created_at: datetime = datetime.utcnow()
+
+@dataclass
+class AuditEvent:
+    """审计事件"""
+    timestamp: datetime
+    tenant_id: str
+    user_id: str
+    action: str
+    resource_type: str
+    resource_id: str
+    status: str
+    details: Dict
+    ip_address: str
+    user_agent: str
+
+class MultiTenantHarness:
+    """多租户Agent Harness"""
+    
+    def __init__(self, config: dict):
+        self.config = config
+        self.tenants: Dict[str, Tenant] = {}
+        self.audit_logger = AuditLogger(config.get("audit_db_url"))
+        self.resource_manager = ResourceManager(config)
+        self.auth = RBACAuth(config.get("auth_config"))
+        
+    async def create_tenant(
+        self,
+        name: str,
+        isolation: TenantIsolation,
+        quota: Dict
+    ) -> Tenant:
+        """创建新租户"""
+        tenant_id = self._generate_tenant_id(name)
+        
+        # 创建隔离环境
+        if isolation == TenantIsolation.NAMESPACE:
+            await self._create_namespace(tenant_id)
+        elif isolation == TenantIsolation.CLUSTER:
+            await self._provision_cluster(tenant_id)
+            
+        tenant = Tenant(
+            id=tenant_id,
+            name=name,
+            isolation_level=isolation,
+            resource_quota=quota,
+            allowed_models=[]
+        )
+        
+        self.tenants[tenant_id] = tenant
+        
+        # 审计日志
+        await self.audit_logger.log(AuditEvent(
+            timestamp=datetime.utcnow(),
+            tenant_id=tenant_id,
+            user_id="system",
+            action="tenant.create",
+            resource_type="tenant",
+            resource_id=tenant_id,
+            status="success",
+            details={"name": name, "isolation": isolation.value},
+            ip_address="",
+            user_agent=""
+        ))
+        
+        return tenant
+        
+    async def run_evaluation(
+        self,
+        tenant_id: str,
+        agent_id: str,
+        test_suite: str,
+        user: dict
+    ) -> dict:
+        """运行评估（带权限检查）"""
+        # 权限检查
+        if not self.auth.check_permission(user, "evaluation:run", tenant_id):
+            raise PermissionError("User does not have permission to run evaluation")
+            
+        tenant = self.tenants.get(tenant_id)
+        if not tenant:
+            raise ValueError(f"Tenant {tenant_id} not found")
+            
+        # 资源配额检查
+        if not await self.resource_manager.check_quota(tenant_id, tenant.resource_quota):
+            raise ResourceWarning("Tenant resource quota exceeded")
+            
+        # 创建隔离的Harness实例
+        harness = await self._create_tenant_harness(tenant)
+        
+        # 记录开始
+        eval_id = self._generate_eval_id()
+        await self.audit_logger.log(AuditEvent(
+            timestamp=datetime.utcnow(),
+            tenant_id=tenant_id,
+            user_id=user["id"],
+            action="evaluation.start",
+            resource_type="evaluation",
+            resource_id=eval_id,
+            status="started",
+            details={"agent_id": agent_id, "test_suite": test_suite},
+            ip_address=user.get("ip"),
+            user_agent=user.get("user_agent")
+        ))
+        
+        try:
+            # 执行评估
+            results = await harness.run_suite(agent_id, test_suite)
+            
+            # 记录完成
+            await self.audit_logger.log(AuditEvent(
+                timestamp=datetime.utcnow(),
+                tenant_id=tenant_id,
+                user_id=user["id"],
+                action="evaluation.complete",
+                resource_type="evaluation",
+                resource_id=eval_id,
+                status="success",
+                details={
+                    "results_summary": results["summary"],
+                    "duration": results["duration"]
+                },
+                ip_address=user.get("ip"),
+                user_agent=user.get("user_agent")
+            ))
+            
+            return results
+            
+        except Exception as e:
+            # 记录失败
+            await self.audit_logger.log(AuditEvent(
+                timestamp=datetime.utcnow(),
+                tenant_id=tenant_id,
+                user_id=user["id"],
+                action="evaluation.failed",
+                resource_type="evaluation",
+                resource_id=eval_id,
+                status="failed",
+                details={"error": str(e)},
+                ip_address=user.get("ip"),
+                user_agent=user.get("user_agent")
+            ))
+            raise
+            
+    async def _create_tenant_harness(self, tenant: Tenant) -> "TenantHarness":
+        """为租户创建隔离的Harness实例"""
+        return TenantHarness(
+            tenant=tenant,
+            namespace=f"harness-{tenant.id}",
+            resource_limits=tenant.resource_quota
+        )
+        
+    def _generate_tenant_id(self, name: str) -> str:
+        """生成租户ID"""
+        hash_input = f"{name}-{datetime.utcnow().isoformat()}"
+        return hashlib.sha256(hash_input.encode()).hexdigest()[:12]
+        
+    def _generate_eval_id(self) -> str:
+        """生成评估ID"""
+        return f"eval-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}-{hashlib.sha256(str(datetime.utcnow()).encode()).hexdigest()[:8]}"
+
+class AuditLogger:
+    """审计日志记录器"""
+    
+    def __init__(self, db_url: str):
+        self.db_url = db_url
+        self.batch_queue = []
+        self.batch_size = 100
+        
+    async def log(self, event: AuditEvent):
+        """记录审计事件"""
+        self.batch_queue.append(asdict(event))
+        
+        if len(self.batch_queue) >= self.batch_size:
+            await self._flush()
+            
+    async def _flush(self):
+        """批量写入日志"""
+        if not self.batch_queue:
+            return
+            
+        # 写入数据库或发送到日志服务
+        events = self.batch_queue[:]
+        self.batch_queue = []
+        
+        # 异步写入
+        asyncio.create_task(self._persist_events(events))
+        
+    async def _persist_events(self, events: List[dict]):
+        """持久化事件"""
+        # 实现具体的存储逻辑
+        pass
+
+# 使用示例
+async def main():
+    harness = MultiTenantHarness({
+        "audit_db_url": "postgresql://...",
+        "auth_config": {...}
+    })
+    
+    # 创建租户
+    tenant = await harness.create_tenant(
+        name="Acme Corp",
+        isolation=TenantIsolation.NAMESPACE,
+        quota={"cpu": 10, "memory": "20Gi", "storage": "100Gi"}
+    )
+    
+    # 运行评估
+    results = await harness.run_evaluation(
+        tenant_id=tenant.id,
+        agent_id="agent-prod-v1",
+        test_suite="comprehensive",
+        user={"id": "user-123", "role": "evaluator"}
+    )
+    
+    print(json.dumps(results, indent=2))
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
 ## Related Documents
 
 - [Config Templates](./Config_Templates.md) - Configuration file templates
 - [Sample Reports](./Sample_Reports.md) - Report examples
 - [Production Assessment](../Assessment/Production_Assessment.md) - Production protocols
+- [Agent Harness Deep Dive](../Agent_Harness_Deep_Dive.md) - Comprehensive technical deep dive

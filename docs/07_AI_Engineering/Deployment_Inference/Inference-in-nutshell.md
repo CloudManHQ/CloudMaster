@@ -513,6 +513,119 @@ flowchart TB
 
 ---
 
+## 🌐 AI Gateway 速成 (2026)
+
+> **一句话**: AI Gateway是LLM流量的"智能路由器"——统一管理多供应商、优化成本、确保安全。
+
+### 为什么需要AI Gateway？
+
+**没有Gateway的痛苦**:
+- 每个服务直接调用OpenAI/Anthropic，难以切换
+- 成本失控，无法追踪
+- 没有缓存，重复请求浪费钱
+- 一家宕机，服务中断
+
+**有Gateway的好处**:
+- 一个API接口，背后多供应商
+- 自动路由到最便宜/最快的模型
+- 语义缓存节省40-50%成本
+- 自动故障转移
+
+### AI Gateway架构
+
+```
+应用 ──► Gateway ──┬──► OpenAI GPT-4
+                   ├──► Anthropic Claude
+                   ├──► Azure OpenAI
+                   └──► 本地模型
+```
+
+### LiteLLM快速上手
+
+**安装**:
+```bash
+pip install litellm
+```
+
+**启动Gateway**:
+```bash
+# 配置文件 config.yaml
+litellm --config config.yaml
+```
+
+**配置示例**:
+```yaml
+# config.yaml
+model_list:
+  - model_name: gpt-4
+    litellm_params:
+      model: openai/gpt-4
+      api_key: os.environ/OPENAI_API_KEY
+  
+  - model_name: gpt-4o-mini
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_key: os.environ/OPENAI_API_KEY
+
+# 路由策略：成本优先
+router_settings:
+  routing_strategy: cost-based
+
+# 语义缓存
+cache:
+  type: redis
+  host: localhost
+  port: 6379
+```
+
+**客户端调用** (OpenAI兼容):
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="http://localhost:4000",  # Gateway地址
+    api_key="not-needed"
+)
+
+# 自动路由到最便宜的模型
+response = client.chat.completions.create(
+    model="gpt-4o-mini",  # 或gpt-4
+    messages=[{"role": "user", "content": "Hello!"}]
+)
+```
+
+### 三层成本优化
+
+```
+┌─────────────────────────────────────┐
+│ Layer 3: 智能路由                    │
+│ 简单查询 → 便宜模型(gpt-4o-mini)      │
+│ 节省: 40-70%                         │
+├─────────────────────────────────────┤
+│ Layer 2: 语义缓存                    │
+│ 相似问题直接返回缓存结果              │
+│ 节省: 40-50%                         │
+├─────────────────────────────────────┤
+│ Layer 1: 提示压缩                    │
+│ 移除冗余上下文                       │
+│ 节省: 20-30%                         │
+└─────────────────────────────────────┘
+总节省: 70-90%
+```
+
+### 快速选型
+
+| 需求 | 推荐方案 |
+|------|----------|
+| 快速开始 | LiteLLM Proxy |
+| 极致性能 | Bifrost (Rust) |
+| 企业观测 | Portkey |
+| 已有Kong | Kong AI Gateway |
+
+**详细文档**: [Deployment & Inference](./Deployment_Inference.md)
+
+---
+
 ## 🔗 相关主题
 
 - [模型训练](../Model_Training/Model-Training-in-nutshell.md) - 模型是如何训练的

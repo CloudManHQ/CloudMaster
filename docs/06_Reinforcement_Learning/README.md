@@ -23,6 +23,13 @@
     │  AI Agents           │
     │  智能体架构           │
     │  (推理/记忆/工具)     │
+    └──────────┬───────────┘
+               │
+               ▼
+    ┌──────────────────────┐
+    │  具身智能             │
+    │  Embodied AI         │
+    │  (机器人/VLA模型)     │
     └──────────────────────┘
 ```
 
@@ -43,6 +50,7 @@
 | 强化学习基础 (RL Foundations) | 入门 | MDP、贝尔曼方程、策略梯度、价值函数，RL 数学框架 | [RL_Foundations.md](./RL_Foundations/RL_Foundations.md) |
 | 深度强化学习 (Deep RL) | 进阶 | DQN、PPO、SAC、离线 RL，结合神经网络的 RL 算法 | [Deep_RL.md](./Deep_RL/Deep_RL.md) |
 | AI Agents (智能体) | 实战 | ReAct、长期记忆、工具使用、多智能体系统，自主决策架构 | [AI_Agents.md](./AI_Agents/AI_Agents.md) |
+| 具身智能 (Embodied AI) | 前沿 | 机器人基础模型、VLA架构、Sim-to-Real、人形机器人产业 | [Embodied_AI_2026.md](./Robotics_Embodied_AI/Embodied_AI_2026.md) |
 
 ## 前置知识 (Prerequisites)
 
@@ -63,6 +71,10 @@
 - **Actor-Critic**: 结合策略和价值函数的 RL 架构
 - **ReAct (Reasoning + Acting)**: 推理与执行交织的智能体范式
 - **Multi-Agent RL**: 多智能体强化学习，处理协作与竞争场景
+- **VLA (Vision-Language-Action)**: 视觉-语言-动作模型，机器人基础模型架构
+- **Sim-to-Real**: 仿真到现实迁移，让仿真训练的模型在真实机器人上工作
+- **Embodied AI**: 具身智能，有物理身体、能与环境交互的AI系统
+- **Robot Foundation Model**: 机器人基础模型，在大量机器人数据上预训练的通用模型
 
 ---
-*Last updated: 2026-02-10*
+*Last updated: 2026-04-01*

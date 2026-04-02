@@ -66,6 +66,9 @@ flowchart LR
 | AI 工作流 (AI Workflow) | 实战 | 流水线编排、错误处理、监控告警 | [AI_Workflow/](./AI_Workflow/) |
 | AI 测试 (AI Testing) | 实战 | 测试、评估和验证 AI 系统，确保生产环境可靠性 | [AI_Testing/](./AI_Testing/) |
 | **OpenClaw 生态系统** (OpenClaw Ecosystem) | 实战 | AI Agent 框架、技能市场、桌面控制，构建自主行动的 AI 助手 | [OpenClaw_Ecosystem/](./OpenClaw_Ecosystem/) |
+| Agent 生产部署 (Agent Production) | 实战 | 企业级Agent架构、K8s部署、监控、CI/CD最佳实践 | [Agent_Production/](./Agent_Production/) |
+| RAG高级实践 2026 (RAG Advanced) | 进阶 | 混合检索、重排序、Agentic RAG、上下文压缩 | [RAG_Advanced_2026/](./RAG_Advanced_2026/) |
+| AI编程助手 2026 (AI Coding Assistants) | 实战 | Cursor/Claude Code/Windsurf/Devin对比选型 | [AI_Coding_Assistants/](./AI_Coding_Assistants/) |
 
 ## 前置知识 (Prerequisites)
 

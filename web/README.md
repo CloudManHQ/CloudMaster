@@ -1,178 +1,127 @@
-# CloudMaster
+# AI Guru Knowledge Base Frontend
 
-CloudMaster是一个面向程序员、架构师和运维人员的一站式云厂商云产品对比工具，提供云产品文档查询、对比等功能。
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![React](https://img.shields.io/badge/React-18.2-blue)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-5.0-purple)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-cyan)](https://tailwindcss.com/)
 
-## 功能特性
+A modern, high-performance knowledge base frontend built to CNCF open-source standards.
 
-- **云厂商覆盖**：支持腾讯云、华为云、火山引擎、阿里云、AWS、Azure、Google Cloud七大云厂商
-- **产品文档查询**：快速查询各云厂商的产品文档
-- **产品类别导航**：按计算、存储、网络等类别组织产品
-- **产品详情展示**：展示产品特性、文档列表等详细信息
-- **响应式设计**：适配不同屏幕尺寸
+## 🚀 Features
 
-## 技术栈
+- **📚 Knowledge Base**: Browse and search 290+ AI documentation files
+- **🔍 Full-Text Search**: Powered by Fuse.js with real-time results
+- **🌓 Dark Mode**: Automatic theme switching with system preference
+- **📱 Responsive**: Mobile-first design, works on all devices
+- **🌍 i18n**: Multi-language support (English, Chinese)
+- **⚡ Performance**: Optimized with Vite, lazy loading, code splitting
+- **♿ Accessible**: WCAG 2.1 AA compliant
+- **🎨 Modern UI**: Built with shadcn/ui and Tailwind CSS
 
-- **前端框架**：React 18 + TypeScript
-- **UI组件库**：Ant Design
-- **路由管理**：React Router
-- **构建工具**：Vite
-- **测试框架**：Jest + React Testing Library
-
-## 项目结构
+## 📁 Project Structure
 
 ```
-src/
-├── components/          # 核心组件
-│   ├── VendorSelector.tsx   # 云厂商选择组件
-│   ├── CategoryNav.tsx      # 产品类别导航组件
-│   ├── ProductList.tsx       # 产品列表组件
-│   └── ProductDetail.tsx     # 产品详情组件
-├── data/                # 云产品数据
-│   └── cloudProducts.json   # 云产品和文档数据
-├── pages/               # 页面组件
-│   └── DocumentCenter.tsx   # 文档中心页面
-├── services/            # 数据服务
-│   └── dataService.ts       # 数据加载和处理服务
-├── types/               # TypeScript类型定义
-│   └── index.ts             # 类型定义文件
-├── App.tsx              # 应用入口
-└── main.tsx             # 渲染入口
+web/
+├── src/
+│   ├── components/          # Reusable UI components
+│   ├── pages/               # Page components
+│   ├── hooks/               # Custom React hooks
+│   ├── stores/              # Zustand state management
+│   ├── services/            # API and data services
+│   ├── utils/               # Utility functions
+│   ├── types/               # TypeScript types
+│   ├── i18n/                # Internationalization
+│   └── styles/              # Global styles
+├── console/                 # Management console sub-project
+├── public/                  # Static assets
+└── docs/                    # Project documentation
 ```
 
-## 安装和运行
+## 🛠️ Tech Stack
 
-### 安装依赖
+| Category | Technology |
+|----------|------------|
+| Framework | React 18 + TypeScript |
+| Build Tool | Vite 5 |
+| Styling | Tailwind CSS 3.4 |
+| Components | shadcn/ui |
+| State | Zustand |
+| Data Fetching | React Query |
+| Routing | React Router 6 |
+| Search | Fuse.js |
+| Markdown | React Markdown |
+| Testing | Vitest + React Testing Library |
+| Linting | ESLint + Prettier |
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm 8+ (recommended) or npm 10+
+
+### Installation
 
 ```bash
-npm install
+# Clone the repository
+git clone https://github.com/your-org/ai-guru-knowledge-base.git
+cd ai-guru-knowledge-base/web
+
+# Install dependencies
+pnpm install
+# or: npm install
+
+# Start development server (port 3055)
+pnpm dev
+# or: npm run dev
+# or use the start script: ./start.sh (macOS/Linux) or start.bat (Windows)
 ```
 
-### 启动开发服务器
+**Access the application:**
+- Main App: http://localhost:3055
+- Console: http://localhost:3056 (run from `console/` directory)
+
+### Build for Production
 
 ```bash
-npm run dev
+# Build for production
+pnpm build
+
+# Preview production build (port 3055)
+pnpm preview
 ```
 
-### 构建生产版本
+### Run Tests
 
 ```bash
-npm run build
+# Run unit tests
+pnpm test
+
+# Run tests with coverage
+pnpm test:coverage
+
+# Run E2E tests
+pnpm test:e2e
 ```
 
-### 预览生产版本
+## 📖 Documentation
 
-```bash
-npm run preview
-```
+- [Architecture](./docs/architecture.md)
+- [Contributing](./CONTRIBUTING.md)
+- [Troubleshooting](./TROUBLESHOOTING.md) - Solutions for common issues
+- [Changelog](./CHANGELOG.md)
 
-### 运行测试
+## 🤝 Contributing
 
-```bash
-npm test
-```
+We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details.
 
-### 生成测试覆盖率报告
+## 📄 License
 
-```bash
-npm run test:coverage
-```
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
 
-## 使用说明
+## 🙏 Acknowledgments
 
-1. **选择云厂商**：在左侧选择要查看的云厂商
-2. **浏览产品类别**：在中间导航栏选择产品类别
-3. **查看产品列表**：在右侧查看该类别下的产品列表
-4. **查看产品详情**：点击"查看文档"按钮查看产品详情
-5. **访问产品文档**：点击文档链接访问官方文档
-
-## 云厂商支持
-
-- 腾讯云
-- 华为云
-- 火山引擎
-- 阿里云
-- AWS
-- Azure
-- Google Cloud
-
-## 常见问题和解决方案
-
-### 1. Vite构建问题
-
-**问题**：运行`npm run dev`或`npm run build`时出现以下错误：
-```
-X [ERROR] Cannot read directory "../../..": Access is denied.
-X [ERROR] Could not resolve "C:\Users\Allen\Documents\GitHub\CloudMaster\vite.config.ts"
-```
-
-**解决方案**：
-- 确保Vite配置文件`vite.config.ts`存在且格式正确
-- 检查项目目录的访问权限
-- 尝试直接使用`npx serve public -p 3000`命令来运行应用
-
-### 2. Jest测试配置问题
-
-**问题**：运行`npm test`时出现类型错误，如`Property 'toBeInTheDocument' does not exist on type 'JestMatchers<HTMLElement>'`
-
-**解决方案**：
-- 确保已安装`@testing-library/jest-dom`：`npm install --save-dev @testing-library/jest-dom`
-- 确保在`jest.setup.ts`中正确导入：`import '@testing-library/jest-dom'`
-- 确保TypeScript配置中包含Jest类型：在`tsconfig.app.json`的`types`数组中添加`"jest"`
-- 安装缺少的依赖：`npm install --save-dev identity-obj-proxy`
-
-### 3. WSL相关错误
-
-**问题**：出现`running wslexec: The service cannot be started, either because it is disabled or because it has no enabled devices associated with it`错误
-
-**解决方案**：
-
-1. **检查WSL服务配置**：
-   ```powershell
-   sc.exe qc WSLService
-   ```
-   确认`START_TYPE`字段是否为`DISABLED`
-
-2. **修改服务启动类型为自动**：
-   ```powershell
-   sc.exe config WSLService start= auto
-   ```
-
-3. **验证启动类型已更改**：
-   ```powershell
-   sc.exe qc WSLService
-   ```
-   确认`START_TYPE`字段显示为`AUTO_START`或`AUTO`
-
-4. **启动WSLService服务**：
-   ```powershell
-   sc.exe start WSLService
-   ```
-
-5. **检查服务状态**：
-   ```powershell
-   sc.exe query WSLService
-   ```
-   确认`STATE`字段显示为`RUNNING`
-
-6. **验证WSL功能恢复正常**：
-   ```powershell
-   wsl --status
-   ```
-
-7. **检查已安装的WSL分发版**：
-   ```powershell
-   wsl --list
-   ```
-
-8. **启动Ubuntu**：
-   ```powershell
-   wsl -d Ubuntu
-   # 或直接运行
-   ubuntu
-   ```
-
-**注意**：如果出现`ERROR_ALREADY_EXISTS`错误，说明分发版已经存在，无需重新安装，直接启动即可。
-
-## 许可证
-
-MIT
+- [shadcn/ui](https://ui.shadcn.com/) for the beautiful component library
+- [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
+- [Vite](https://vitejs.dev/) for the next-generation frontend tooling

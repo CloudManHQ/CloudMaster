@@ -4,7 +4,7 @@
 
 [![Knowledge Base](https://img.shields.io/badge/Knowledge-Base-blue)](.)
 [![In-Nutshell](https://img.shields.io/badge/In--Nutshell-9%20Guides-green)](.)
-[![Chapters](https://img.shields.io/badge/Chapters-11-orange)](.)
+[![Chapters](https://img.shields.io/badge/Chapters-13-orange)](.)
 
 ---
 
@@ -200,14 +200,15 @@ flowchart TB
 
 | 章节 | 主题 | 核心内容 | 难度 |
 |------|------|----------|------|
-| **[01 基础理论](./01_Fundamentals/README.md)** | 数学与计算机基础 | 线性代数、概率统计、数据结构、分布式系统 | ⭐⭐ |
+| **[00 AI简介与历史](./00_AI_Introduction/README.md)** | AI通识导入 | AI基础概念、技术全景、历史时间线、工具实践、伦理社会、未来趋势 | ⭐ |
+| **[01 基础理论](./01_Fundamentals/README.md)** | 数学与计算机基础 | 线性代数、概率统计、数据结构、分布式系统、**AI硬件/H100/H200** | ⭐⭐ |
 | **[02 经典机器学习](./02_Machine_Learning/README.md)** | 传统 ML 方法 | 监督/无监督学习、特征工程、XGBoost | ⭐⭐ |
-| **[03 深度学习](./03_Deep_Learning/README.md)** | 神经网络核心 | MLP、反向传播、SGD/Adam、Dropout | ⭐⭐⭐ |
-| **[04 NLP 与大模型](./04_NLP_LLMs/README.md)** | 语言模型技术 | Transformer、GPT/BERT/LLaMA、LoRA/RLHF | ⭐⭐⭐⭐ |
-| **[05 计算机视觉](./05_Computer_Vision/README.md)** | 视觉 AI | CNN/ResNet、YOLO、Diffusion Models | ⭐⭐⭐ |
-| **[06 强化学习与智能体](./06_Reinforcement_Learning/README.md)** | RL 与 Agent | MDP、DQN/PPO、Tool Calling、Multi-Agent | ⭐⭐⭐⭐ |
-| **[07 AI 工程化](./07_AI_Engineering/README.md)** | 生产部署 | vLLM、量化、RAG、MLOps、测试评估 | ⭐⭐⭐⭐ |
-| **[08 伦理与安全](./08_Ethics_Safety/README.md)** | AI 安全 | 偏见公平、红队测试、法规合规 | ⭐⭐⭐ |
+| **[03 深度学习](./03_Deep_Learning/README.md)** | 神经网络核心 | MLP、反向传播、SGD/Adam、Dropout、**世界模型/JEPA** | ⭐⭐⭐ |
+| **[04 NLP 与大模型](./04_NLP_LLMs/README.md)** | 语言模型技术 | Transformer、GPT/BERT/LLaMA、LoRA/RLHF/QLoRA/DoRA、**GPT-5.2/Claude 4.5 2026** | ⭐⭐⭐⭐ |
+| **[05 计算机视觉](./05_Computer_Vision/README.md)** | 视觉 AI | CNN/ResNet、YOLO、Diffusion、**视频生成2026/Veo3/Kling** | ⭐⭐⭐ |
+| **[06 强化学习与智能体](./06_Reinforcement_Learning/README.md)** | RL 与 Agent | MDP、DQN/PPO、Tool Calling、Multi-Agent、**具身智能/VLA** | ⭐⭐⭐⭐ |
+| **[07 AI 工程化](./07_AI_Engineering/README.md)** | 生产部署 | vLLM、量化、RAG高级实践、MLOps、**Agent生产部署**、**AI编程助手** | ⭐⭐⭐⭐ |
+| **[08 伦理与安全](./08_Ethics_Safety/README.md)** | AI 安全 | 偏见公平、红队测试、法规合规、**OWASP LLM+ASI 2026** | ⭐⭐⭐ |
 | **[09 业界观点](./09_talks/)** | 领袖洞见 | 21 位 AI 领袖的演讲与观点 | ⭐⭐ |
 | **[10 必读论文](./10_papers/README.md)** | 经典文献 | Transformer、GPT、BERT 等里程碑论文 | ⭐⭐⭐⭐ |
 | **[11 面试与岗位](./11_interviews/jobs.md)** | 职业发展 | 21 个 AI 岗位的面试指南 | ⭐⭐ |
@@ -218,11 +219,14 @@ flowchart TB
 
 ```
 docs/
+├── 00_AI_Introduction/         # AI简介与历史 (2026新 - 通识导入)
+│   └── AI_History_Timeline.md  # AI历史时间线1950-2026
 ├── 01_Fundamentals/          # 数学与计算机基础
 │   ├── Linear_Algebra/
 │   ├── Probability_Statistics/
 │   ├── Data_Structures_Algorithms/
-│   └── Distributed_Systems/
+│   ├── Distributed_Systems/
+│   └── AI_Hardware/            # AI硬件与芯片2026 (2026新)
 ├── 02_Machine_Learning/      # 经典机器学习
 │   ├── Supervised_Learning/
 │   ├── Unsupervised_Learning/
@@ -244,7 +248,18 @@ docs/
 ├── 06_Reinforcement_Learning/ # 强化学习与智能体 ⭐
 │   ├── RL_Foundations/
 │   ├── Deep_RL/
-│   └── AI_Agents/            # 含 Agent-in-nutshell.md
+│   ├── AI_Agents/            # 含 Agent-in-nutshell.md
+│   └── Robotics_Embodied_AI/ # 具身智能与人形机器人 (2026新)
+├── 03_Deep_Learning/         # 深度学习基础
+│   ├── Neural_Network_Core/
+│   ├── Optimization/
+│   └── World_Models/         # JEPA/V-JEPA 世界模型 (2026新)
+├── 05_Computer_Vision/       # 计算机视觉
+│   ├── Image_Classification_Detection/
+│   ├── Segmentation/
+│   ├── Generative_Models/
+│   ├── Multimodal_Vision/
+│   └── Video_Generation/     # AI视频生成 2026 (2026新)
 ├── 07_AI_Engineering/        # AI 工程化 ⭐⭐
 │   ├── Model_Training/       # 含 Model-Training-in-nutshell.md
 │   ├── Deployment_Inference/ # 含 Inference-in-nutshell.md
@@ -252,14 +267,18 @@ docs/
 │   ├── AI_Skills/            # 含 Skills-in-nutshell.md
 │   ├── AI_Workflow/          # 含 Workflow-in-nutshell.md
 │   ├── AI_Testing/           # 含 AI-Testing-in-nutshell.md
+│   ├── Agent_Production/     # Agent生产部署最佳实践 (2026新)
 │   ├── MLOps_Pipeline/
 │   └── Model_Evaluation/
 ├── 08_Ethics_Safety/         # 伦理与安全
 │   ├── Value_Alignment/
-│   └── AI_Safety_RedTeaming/
+│   ├── AI_Safety_RedTeaming/
+│   └── AI_Security_2026/     # OWASP LLM+ASI安全框架 (2026新)
 ├── 09_talks/                 # 业界观点 (21 位领袖)
 ├── 10_papers/                # 必读论文清单
-└── 11_interviews/            # 面试指南 (21 个岗位)
+├── 11_interviews/            # 面试指南 (21 个岗位)
+└── 99_AI_Applications_Industry/ # AI应用与行业融合 (2026新 - 行业应用)
+    └── AI_Applications_Industry.md # 医疗/金融/制造/零售等核心行业
 ```
 
 ---
@@ -268,11 +287,14 @@ docs/
 
 | 指标 | 数量 |
 |------|------|
-| 知识章节 | 11 |
+| 知识章节 | 13 |
 | 速成指南 (In-Nutshell) | 9 |
-| 业界领袖观点 | 21 |
-| AI 岗位面试指南 | 21 |
-| 涵盖技术领域 | 50+ |
+| **2026年专题深度报告** | **12** |
+| **通识课教材文档** | **10** (00章) |
+| Markdown文档总数 | 290 |
+| 总内容量 | 2.6M+ 字符 |
+| 技术领域覆盖 | 70+
+| 涵盖技术领域 | 70+ |
 
 ---
 
@@ -289,6 +311,24 @@ docs/
 - [AI 工作流](./07_AI_Engineering/AI_Workflow/Workflow-in-nutshell.md)
 - [AI 测试](./07_AI_Engineering/AI_Testing/AI-Testing-in-nutshell.md)
 
+### 2026年最新专题 (2026 Latest)
+- [**LLM架构2026**](./04_NLP_LLMs/LLM_Architectures/LLM_Architectures.md) - GPT-5.2, Claude 4.5, Gemini 3, Llama 4, 推理模型架构
+- [**AI硬件2026**](./01_Fundamentals/AI_Hardware/AI_Hardware_2026.md) - H100/H200/B200对比, GPU选型指南, 边缘AI芯片
+- [**PEFT微调2026**](./04_NLP_LLMs/Fine_tuning_Techniques/PEFT_2026/PEFT_2026.md) - LoRA/QLoRA/DoRA/rsLoRA, 单卡微调70B最佳实践
+- [**RAG高级实践2026**](./07_AI_Engineering/RAG_Advanced_2026/RAG_Advanced_2026.md) - 混合检索/重排序/Agentic RAG/上下文压缩
+- [**AI编程助手2026**](./07_AI_Engineering/AI_Coding_Assistants/AI_Coding_Assistants_2026.md) - Cursor/Claude Code/Windsurf/Devin对比选型
+- [**AI基础设施2026**](./07_AI_Engineering/AI_Infrastructure_2026.md) - SGLang/vLLM基准, AI Gateway, LLMOps三阶段缓存
+- [**Agent协议2026**](./06_Reinforcement_Learning/AI_Agents/Agent_Protocols_2026.md) - MCP/A2A/UCP协议栈, 协议测试框架
+- [**具身智能2026**](./06_Reinforcement_Learning/Robotics_Embodied_AI/Embodied_AI_2026.md) - VLA模型, 人形机器人产业格局, Sim-to-Real
+- [**世界模型2026**](./03_Deep_Learning/World_Models/World_Models_2026.md) - JEPA/V-JEPA 2.1/LeJEPA, 自监督世界建模
+- [**AI视频生成2026**](./05_Computer_Vision/Video_Generation/Video_Generation_2026.md) - Veo3/Kling/Seedance, 后Sora时代格局
+- [**AI安全2026**](./08_Ethics_Safety/AI_Security_2026/AI_Security_2026.md) - OWASP LLM + ASI框架, Agent安全最佳实践
+- [**Agent生产部署**](./07_AI_Engineering/Agent_Production/Agent_Production_2026.md) - K8s架构, 监控, CI/CD, 成本控制
+
+### 通识教材专题 (For Education)
+- [AI历史时间线1950-2026](./00_AI_Introduction/AI_History_Timeline.md) - 从达特茅斯会议到Agentic AI的完整发展史
+- [AI应用与行业融合](./99_AI_Applications_Industry/AI_Applications_Industry.md) - 医疗/金融/制造/零售核心行业深度分析
+
 ### 核心参考资料
 - [Deep Learning Book](https://www.deeplearningbook.org/)
 - [Hugging Face Course](https://huggingface.co/learn/nlp-course/)
@@ -301,6 +341,27 @@ docs/
 
 | 日期 | 更新内容 |
 |------|----------|
+| 2026-04-01 | **第四轮查漏补缺2026**: 完善通识课教材体系 (术语表、案例集、实验指导) |
+| 2026-04-01 | **新增AI术语表**: 100+核心术语从A到Z完整解释，含定义、示例、关联概念 |
+| 2026-04-01 | **新增AI经典案例集**: 6个里程碑案例深度剖析 (AlphaGo、ChatGPT、ImageNet等) |
+| 2026-04-01 | **新增AI实验指导**: 8个课堂实验+期末项目，支持16周完整课程 |
+| 2026-04-01 | **第三轮查漏补缺2026**: 新增通识教材专题 (AI历史时间线、AI应用与行业融合) |
+| 2026-04-01 | **新增AI历史时间线**: 1950-2026完整AI发展史, 4次AI夏天与冬天, 关键人物与里程碑 |
+| 2026-04-01 | **新增AI行业融合**: 医疗/金融/制造/零售/自动驾驶/教育核心行业深度分析 |
+| 2026-04-01 | **第二轮查漏补缺2026**: 新增4大深度专题 (AI硬件/PEFT/RAG高级实践/AI编程助手) |
+| 2026-04-01 | **新增AI硬件2026**: H100/H200/B200/MI300X对比, GPU选型决策树, 边缘AI芯片 |
+| 2026-04-01 | **新增PEFT微调2026**: LoRA/QLoRA/DoRA/rsLoRA, 单卡微调70B最佳实践 |
+| 2026-04-01 | **新增RAG高级实践**: 混合检索/重排序/Agentic RAG/上下文压缩, 准确率60%→90%+ |
+| 2026-04-01 | **新增AI编程助手**: Cursor/Claude Code/Windsurf/Devin对比, 2026选型指南 |
+| 2026-04-01 | **第一轮查漏补缺2026**: 新增7大深度专题，涵盖AI最新技术栈和行业最佳实践 |
+| 2026-04-01 | **LLM架构2026更新**: GPT-5.2, Claude 4.5, Gemini 3, Llama 4, 推理模型架构趋势 |
+| 2026-04-01 | **新增世界模型专题**: JEPA/V-JEPA 2.1/LeJEPA, Yann LeCun通往AGI路径 |
+| 2026-04-01 | **新增AI视频生成专题**: Veo3/Kling/Seedance, Sora停止服务后市场格局 |
+| 2026-04-01 | **新增AI安全2026专题**: OWASP LLM + ASI框架, Agent安全最佳实践 |
+| 2026-04-01 | **新增Agent生产部署**: K8s架构, 监控, CI/CD, 成本控制, 企业级最佳实践 |
+| 2026-04-01 | **具身智能专题**: 机器人基础模型/VLA架构/Sim-to-Real/人形机器人产业格局 |
+| 2026-04-01 | **基础设施更新**: SGLang/vLLM 2026年性能基准、AI Gateway架构、LLMOps三阶段缓存 |
+| 2026-04-01 | **Agent协议2026**: MCP/A2A/UCP协议栈、协议测试框架、安全最佳实践 |
 | 2026-03-18 | 新增 3 篇速成指南：LLM 基础、Prompt Engineering、AI 测试 |
 | 2026-03-18 | 完善学习路线图，支持 Ops → AI Agent 工程师转型路径 |
 | 2026-02-26 | 新增 6 篇核心速成指南（训练/推理/RAG/Agent/技能/工作流） |

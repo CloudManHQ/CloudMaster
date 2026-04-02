@@ -835,6 +835,158 @@ alerts:
 
 ---
 
+## 🔌 2026 协议驱动工作流
+
+> **一句话**: 2026年的工作流基于MCP和A2A协议构建，实现跨框架、跨厂商的Agent协作。
+
+### 协议驱动 vs 传统工作流
+
+| 特性 | 传统工作流 | 协议驱动工作流 (2026) |
+|------|-----------|---------------------|
+| **组件连接** | 代码耦合 | 协议松耦合 |
+| **工具集成** | 定制Connector | MCP标准接口 |
+| **Agent协作** | 同框架内 | A2A跨框架 |
+| **可替换性** | 困难 | 即插即用 |
+| **治理** | 自定义 | AAIF标准 |
+
+### MCP工具调用工作流
+
+```python
+# 基于MCP的工具调用工作流
+from mcp import ClientSession
+
+async def mcp_tool_workflow():
+    """使用MCP Server的工作流"""
+    
+    # 连接多个MCP Servers
+    async with ClientSession(server_params) as session:
+        
+        # 步骤1: 从数据库获取数据
+        data = await session.call_tool(
+            "query_database",
+            {"sql": "SELECT * FROM sales WHERE date > '2026-01-01'"}
+        )
+        
+        # 步骤2: 使用LLM分析
+        analysis = await session.call_tool(
+            "llm_analyze",
+            {"data": data, "prompt": "分析销售趋势"}
+        )
+        
+        # 步骤3: 生成报告并发送邮件
+        await session.call_tool(
+            "send_email",
+            {"to": "manager@company.com", "content": analysis}
+        )
+```
+
+### A2A多Agent协作工作流
+
+```python
+# 基于A2A的多Agent协作工作流
+async def a2a_collaboration_workflow():
+    """多个Agent通过A2A协议协作"""
+    
+    # 发现可用Agents
+    agents = await a2a_discover_agents("https://agent-registry.company.com")
+    
+    # 步骤1: 研究Agent收集信息
+    research_task = await a2a_send_task(
+        agent_url=agents["researcher"].url,
+        message={"content": "研究AI行业2026趋势"}
+    )
+    research_result = await a2a_wait_completion(research_task.id)
+    
+    # 步骤2: 写作Agent生成报告
+    writing_task = await a2a_send_task(
+        agent_url=agents["writer"].url,
+        message={"content": f"基于以下研究撰写报告: {research_result}"}
+    )
+    report = await a2a_wait_completion(writing_task.id)
+    
+    # 步骤3: 审核Agent检查质量
+    review_task = await a2a_send_task(
+        agent_url=agents["reviewer"].url,
+        message={"content": f"审核这份报告: {report}"}
+    )
+    final_report = await a2a_wait_completion(review_task.id)
+    
+    return final_report
+```
+
+### 协议组合工作流
+
+```python
+# MCP + A2A 组合工作流
+async def hybrid_protocol_workflow():
+    """MCP工具 + A2A Agent协作"""
+    
+    # A2A: 协调Agent分配任务
+    coordinator = await a2a_connect("coordinator-agent.company.com")
+    
+    # MCP: 获取外部数据
+    async with mcp_client("data-server") as data_conn:
+        raw_data = await data_conn.call_tool("fetch_data", {"source": "api"})
+    
+    # A2A: 委托处理Agent
+    processing_agent = await a2a_discover_by_skill("data-processing")
+    task = await a2a_send_task(
+        processing_agent.url,
+        message={"content": f"处理数据: {raw_data}"}
+    )
+    processed = await a2a_wait_completion(task.id)
+    
+    # MCP: 存储结果
+    async with mcp_client("storage-server") as storage_conn:
+        await storage_conn.call_tool("save_result", {"data": processed})
+```
+
+### 企业级治理工作流
+
+```python
+# 带AAIF治理的工作流
+@require_authentication
+@enforce_policy("data-privacy")
+@audit_log(action="workflow_execute")
+async def governed_workflow(user_request):
+    """受治理的工作流执行"""
+    
+    # 1. 策略检查
+    policy_check = await aaif_check_policy(
+        user=user_request.user,
+        action="access_sensitive_data",
+        context=user_request.context
+    )
+    if not policy_check.allowed:
+        raise PolicyViolation(policy_check.reason)
+    
+    # 2. 执行工作流
+    result = await execute_core_workflow(user_request)
+    
+    # 3. 审计记录
+    await aaif_audit_log.record({
+        "action": "workflow_complete",
+        "user": user_request.user.id,
+        "resources_accessed": result.accessed_resources,
+        "timestamp": datetime.utcnow()
+    })
+    
+    return result
+```
+
+### 选型参考
+
+| 工作流类型 | 推荐协议 | 说明 |
+|-----------|---------|------|
+| 单Agent + 多工具 | MCP | 简单高效 |
+| 多Agent协作 | A2A | 松耦合协作 |
+| 复杂业务流程 | MCP + A2A | 完整能力 |
+| 企业级生产 | All + AAIF | 安全合规 |
+
+**详细参考**: [Agent Protocols 2026](../../06_Reinforcement_Learning/AI_Agents/Agent_Protocols_2026.md)
+
+---
+
 ## 📚 核心要点
 
 ```mermaid
@@ -844,6 +996,7 @@ flowchart TB
     C --> D[优雅处理失败<br/>重试/熔断/DLQ/Saga]
     D --> E[监控一切<br/>成功率/时长/错误]
     E --> F[任务幂等<br/>安全重试]
+    F --> G[2026用协议<br/>MCP+A2A标准化]
 ```
 
 ---
