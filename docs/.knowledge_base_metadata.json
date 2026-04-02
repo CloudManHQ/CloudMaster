@@ -1,0 +1,126 @@
+{
+  "name": "AI Guru Knowledge Base",
+  "version": "2026.04",
+  "language": "zh-CN",
+  "total_documents": 290,
+  "total_characters": 2668188,
+  "chapters": 13,
+  "quick_guides": 9,
+  "description": "从理论到生产的完整 AI 知识体系",
+  "target_audience": ["运维工程师", "开发工程师", "大学生", "自学者", "产品经理", "研究人员", "教育者"],
+  "structure": {
+    "00_AI_Introduction": {
+      "name": "AI 简介与历史",
+      "type": "university_curriculum",
+      "documents": ["AI_Fundamentals", "AI_Technology_Landscape", "AI_History_Timeline", "AI_Tools", "AI_Ethics", "AI_Future", "AI_Learning", "AI_Glossary", "AI_Cases", "AI_Labs"],
+      "difficulty": "beginner",
+      "estimated_hours": 16
+    },
+    "01_Fundamentals": {
+      "name": "基础理论",
+      "type": "theory",
+      "topics": ["Linear_Algebra", "Probability_Statistics", "Data_Structures_Algorithms", "Distributed_Systems", "AI_Hardware"],
+      "difficulty": "intermediate"
+    },
+    "02_Machine_Learning": {
+      "name": "经典机器学习",
+      "type": "theory",
+      "topics": ["Supervised_Learning", "Unsupervised_Learning", "Feature_Engineering"],
+      "difficulty": "intermediate"
+    },
+    "03_Deep_Learning": {
+      "name": "深度学习",
+      "type": "theory",
+      "topics": ["Neural_Network_Core", "Optimization", "World_Models"],
+      "difficulty": "advanced"
+    },
+    "04_NLP_LLMs": {
+      "name": "NLP 与大模型",
+      "type": "applied",
+      "topics": ["Sequence_Models", "Transformer_Revolution", "LLM_Architectures", "Fine_tuning_Techniques", "Prompt_Engineering"],
+      "difficulty": "advanced",
+      "special_reports_2026": ["LLM_Architectures_2026", "PEFT_2026"]
+    },
+    "05_Computer_Vision": {
+      "name": "计算机视觉",
+      "type": "applied",
+      "topics": ["Image_Classification_Detection", "Segmentation", "Generative_Models", "Multimodal_Vision", "Video_Generation"],
+      "difficulty": "advanced",
+      "special_reports_2026": ["Video_Generation_2026"]
+    },
+    "06_Reinforcement_Learning": {
+      "name": "强化学习与智能体",
+      "type": "applied",
+      "topics": ["RL_Foundations", "Deep_RL", "AI_Agents", "Robotics_Embodied_AI"],
+      "difficulty": "advanced",
+      "special_reports_2026": ["Embodied_AI_2026", "Agent_Protocols_2026"]
+    },
+    "07_AI_Engineering": {
+      "name": "AI 工程化",
+      "type": "production",
+      "topics": ["Model_Training", "Deployment_Inference", "RAG_Systems", "AI_Skills", "AI_Workflow", "AI_Testing", "Agent_Production", "MLOps_Pipeline"],
+      "difficulty": "advanced",
+      "special_reports_2026": ["RAG_Advanced_2026", "AI_Coding_Assistants_2026", "Agent_Production_2026", "AI_Infrastructure_2026"]
+    },
+    "08_Ethics_Safety": {
+      "name": "伦理与安全",
+      "type": "theory",
+      "topics": ["Value_Alignment", "AI_Safety_RedTeaming", "AI_Security_2026"],
+      "difficulty": "intermediate",
+      "special_reports_2026": ["AI_Security_2026"]
+    },
+    "09_talks": {
+      "name": "业界观点",
+      "type": "reference",
+      "count": 21,
+      "difficulty": "beginner"
+    },
+    "10_papers": {
+      "name": "必读论文",
+      "type": "reference",
+      "difficulty": "advanced"
+    },
+    "11_interviews": {
+      "name": "面试与岗位",
+      "type": "career",
+      "count": 21,
+      "difficulty": "intermediate"
+    },
+    "99_AI_Applications_Industry": {
+      "name": "行业应用",
+      "type": "applied",
+      "topics": ["Healthcare", "Finance", "Manufacturing", "Retail", "Autonomous_Driving", "Education"],
+      "difficulty": "intermediate"
+    }
+  },
+  "special_reports_2026": [
+    "LLM_Architectures_2026",
+    "AI_Hardware_2026",
+    "PEFT_2026",
+    "RAG_Advanced_2026",
+    "AI_Coding_Assistants_2026",
+    "Embodied_AI_2026",
+    "World_Models_2026",
+    "AI_Video_Generation_2026",
+    "AI_Security_2026",
+    "Agent_Production_2026",
+    "Agent_Protocols_2026",
+    "AI_Infrastructure_2026"
+  ],
+  "agent_friendly": {
+    "structured_metadata": true,
+    "file_naming_convention": "PascalCase_with_numbers",
+    "code_examples": "runnable",
+    "bilingual": "Chinese_primary_English_technical",
+    "citations": "complete",
+    "version_control": "git"
+  },
+  "compatible_tools": [
+    "NotebookLM",
+    "ima",
+    "Claude_Projects",
+    "ChatGPT_GPTs",
+    "Obsidian",
+    "Notion"
+  ]
+}

@@ -1,189 +1,419 @@
-# 🧠 AI Guru Knowledge Base
+<div align="center">
 
-> **Production-Grade AI Learning Resource** | 从理论到生产的完整 AI 知识体系
+<h1>🧠 AI Guru 知识库</h1>
 
-[![Docs](https://img.shields.io/badge/Docs-290%2B%20Files-blue)](./docs)
-[![Content](https://img.shields.io/badge/Content-2.6M%2B%20Chars-green)](./docs)
-[![Topics](https://img.shields.io/badge/Topics-70%2B-orange)](./docs)
-[![License](https://img.shields.io/badge/License-MIT-yellow)](./LICENSE)
-[![Updated](https://img.shields.io/badge/Updated-2026--04-blueviolet)](./docs)
+<p><strong>这可能是 GitHub 上最全面的 AI 学习资源</strong></p>
 
-[📚 **Browse Docs**](./docs) • [🚀 **Quick Start**](#-quick-start) • [🌐 **Web Frontend**](./web) • [🤝 **Contribute**](#-contributing)
+<p>从理论到生产的完整 AI 知识体系 | 290+ 文档 | 260万+ 字 | 2026 最新</p>
+
+<p>
+  <a href="#-快速开始">🚀 快速开始</a> •
+  <a href="#-为什么选-ai-guru">💡 为什么选择</a> •
+  <a href="#-内容导航">📚 内容导航</a> •
+  <a href="#-适用人群">🎯 适用人群</a> •
+  <a href="#-下载到本地工具">💾 下载到本地</a>
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/文档-290%2B-blue?style=flat-square&logo=bookstack" alt="Docs">
+  <img src="https://img.shields.io/badge/字数-260万%2B-green?style=flat-square" alt="Content">
+  <img src="https://img.shields.io/badge/章节-13-orange?style=flat-square" alt="Chapters">
+  <img src="https://img.shields.io/badge/速成指南-9-purple?style=flat-square" alt="Guides">
+  <img src="https://img.shields.io/badge/更新-2026--04-red?style=flat-square" alt="Updated">
+  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="License">
+</p>
+
+<p>
+  <a href="./README_EN.md">🇺🇸 English Version</a>
+</p>
+
+</div>
 
 ---
 
-## 🌟 What Makes AI Guru Special?
+## 💡 为什么选 AI Guru？
 
-### The Most Comprehensive AI Resource on GitHub
+> **问题**：AI 领域变化太快，学习者面临信息碎片化、内容过时、理论与实践脱节的困境
+> 
+> **解决方案**：AI Guru 是生产级的知识体系，帮你从 0 到 1 掌握 AI，从理论直达生产部署
 
-| Feature | Description |
-|---------|-------------|
-| 📚 **290+ Documents** | 2.6M+ characters covering theory to production |
-| 🎯 **Dual Learning Paths** | Quick onboarding (9 guides) + Deep mastery (13 chapters) |
-| 🆕 **2026 Latest** | GPT-5.2, Claude 4.5, VLA Robotics, World Models |
-| 🎓 **University Curriculum** | Complete AI general education with labs & cases |
-| 🏭 **Production-Ready** | Real deployment guides: K8s, MLOps, Agent infra |
-| 🔍 **Modern Frontend** | React + Vite + Full-text search + Dark mode |
+### 🌟 核心亮点
+
+<table>
+<tr>
+<td width="50%">
+
+**📚 内容全面**
+- 290+ Markdown 文档
+- 260万+ 字符（约 450 页 A4）
+- 涵盖 70+ 技术领域
+- 从数学基础到 AGI 前沿
+
+</td>
+<td width="50%">
+
+**🎯 双轨学习**
+- **速成路径**：9 篇实战指南（35-45 小时）
+- **系统学习**：13 大章节深度剖析
+- **大学课程**：16 周完整教学大纲
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**🆕 2026 最新**
+- GPT-5.2 / Claude 4.5 架构
+- VLA 具身智能机器人
+- JEPA 世界模型
+- Agent 生产部署最佳实践
+
+</td>
+<td width="50%">
+
+**🏭 生产就绪**
+- K8s 部署方案
+- MLOps 流水线
+- 成本优化策略
+- 企业级安全合规
+
+</td>
+</tr>
+</table>
+
+### 📊 数据说话
+
+```
+📁 290 个 Markdown 文件    📄 260 万+ 字符
+📚 13 个知识章节          ⚡ 9 个速成指南
+🎓 10 本大学教材          🔬 12 个 2026 专题
+🏢 8 大行业应用           👔 21 个岗位面试指南
+🧪 8 个动手实验           📖 6 个经典案例
+```
 
 ---
 
-## 🚀 Quick Start
+## 🚀 快速开始
 
-### Read Online (Recommended)
+### 方式一：直接阅读（推荐）
 
 ```bash
+# 克隆仓库
 git clone https://github.com/your-org/ai-guru-knowledge-base.git
+
+# 进入文档目录
 cd ai-guru-knowledge-base/docs
 
-# For beginners: Start with AI Introduction
-cd 00_AI_Introduction && ls
-
-# For engineers: Quick guides
-cd 04_NLP_LLMs/LLM_Architectures && open LLM-Basics-in-nutshell.md
+# 根据你的角色选择起点
+ls -la
 ```
 
-### Run Web Frontend
+### 方式二：Web 端浏览
 
 ```bash
-cd web
+cd ai-guru-knowledge-base/web
 npm install
 npm run dev
-# Open http://localhost:3055
+# 访问 http://localhost:3055
 ```
 
-### Choose Your Path
+### 方式三：导入到 AI 工具
 
-| Role | Entry Point | Duration |
-|------|-------------|----------|
-| **运维/开发工程师** | [9 In-Nutshell Guides](#-in-nutshell-guides) | 15-20h |
-| **大学生/自学者** | [00_AI_Introduction](./docs/00_AI_Introduction/) | 16-20h |
-| **产品经理** | [99_Industry_Apps](./docs/99_AI_Applications_Industry/) | 8-10h |
-| **研究人员** | [10_Papers](./docs/10_papers/) | Self-paced |
+支持导入到 NotebookLM、ima、Claude Projects 等：
 
----
+```bash
+# 下载完整知识库（含元数据）
+git clone --depth 1 https://github.com/your-org/ai-guru-knowledge-base.git
 
-## 📊 Project Stats
-
-```
-📁 290+ Markdown Documents
-📄 2.6M+ Characters (~450 A4 pages)
-📚 13 Knowledge Chapters
-⚡ 9 In-Nutshell Guides
-🎓 10 University Textbooks
-🔬 12 2026 Special Reports
-🏢 8 Industry Verticals
-👔 21 Career Interview Guides
+# 或者直接下载 ZIP
+curl -L -o ai-guru.zip https://github.com/your-org/ai-guru-knowledge-base/archive/refs/heads/main.zip
 ```
 
 ---
 
-## 📚 Content Structure
+## 🎯 适用人群
 
-### 🎓 00_AI_Introduction - University Curriculum
-Complete AI general education: 10 textbooks, 6 cases, 8 labs, 16-week syllabus
+<table>
+<tr>
+<td align="center" width="25%">
 
-### ⚡ In-Nutshell Guides (速成路径)
-Production-focused guides for engineers:
-1. LLM Basics → Prompt Engineering → Model Training
-2. Model Inference → RAG Systems → AI Agents
-3. AI Skills → AI Workflows → AI Testing
+**👨‍💻 运维/开发工程师**
 
-### 🔬 13 Systematic Chapters
-```
-01_Fundamentals     → Math, Algorithms, Distributed Systems
-02_Machine_Learning → Classical ML methods
-03_Deep_Learning    → Neural networks, Optimization
-04_NLP_LLMs         → Transformers, GPT-5.2/Claude 4.5
-05_Computer_Vision  → CNN, Diffusion, Video Generation
-06_RL_Agents        → DQN/PPO, VLA Robotics
-07_AI_Engineering   → RAG, MLOps, Production
-08_Ethics_Safety    → Alignment, Red teaming
-09_Talks            → 21 AI Leaders' insights
-10_Papers           → Essential readings
-11_Interviews       → Career guides
-99_Industry         → Healthcare/Finance/Manufacturing
-```
+转型 AI Agent 工程师
+
+⏱️ 15-20 小时
+
+[速成指南 →](./docs#-速成路径-in-nutshell)
+
+</td>
+<td align="center" width="25%">
+
+**🎓 大学生/自学者**
+
+系统学习 AI 全栈
+
+⏱️ 16-20 周
+
+[大学课程 →](./docs/00_AI_Introduction/)
+
+</td>
+<td align="center" width="25%">
+
+**📊 产品经理**
+
+理解 AI 能力边界
+
+⏱️ 8-10 小时
+
+[行业应用 →](./docs/99_AI_Applications_Industry/)
+
+</td>
+<td align="center" width="25%">
+
+**🔬 研究人员**
+
+追踪前沿技术
+
+⏱️ 自主学习
+
+[必读论文 →](./docs/10_papers/)
+
+</td>
+</tr>
+</table>
 
 ---
 
-## 🆕 2026 Special Reports
+## 📚 内容导航
 
-| Topic | Highlights |
-|-------|-----------|
-| [LLM Architectures](./docs/04_NLP_LLMs/LLM_Architectures/LLM_Architectures.md) | GPT-5.2, Claude 4.5, Reasoning models |
-| [AI Hardware](./docs/01_Fundamentals/AI_Hardware/AI_Hardware_2026.md) | H100/H200/B200, MI300X comparison |
-| [PEFT Fine-tuning](./docs/04_NLP_LLMs/Fine_tuning_Techniques/PEFT_2026/) | LoRA/QLoRA/DoRA, 70B on single GPU |
-| [RAG Advanced](./docs/07_AI_Engineering/RAG_Advanced_2026/) | Agentic RAG, 60%→90% accuracy |
-| [AI Coding Assistants](./docs/07_AI_Engineering/AI_Coding_Assistants/) | Cursor, Claude Code, Devin comparison |
-| [Embodied AI](./docs/06_Reinforcement_Learning/Robotics_Embodied_AI/) | VLA models, Humanoid robots |
-| [World Models](./docs/03_Deep_Learning/World_Models/) | JEPA/V-JEPA, LeCun's AGI path |
-| [AI Video Generation](./docs/05_Computer_Vision/Video_Generation/) | Veo3, Kling 3.0, Post-Sora |
-| [AI Security](./docs/08_Ethics_Safety/AI_Security_2026/) | OWASP LLM, ASI Framework |
-| [Agent Production](./docs/07_AI_Engineering/Agent_Production/) | K8s, CI/CD, Cost control |
+### 🎓 大学通识课程（00_AI_Introduction）
+
+完整的 AI 通识教育，支持 16 周学期制：
+
+| 模块 | 内容 | 时长 |
+|------|------|------|
+| AI 基础概念 | 定义、类型、核心技术 | 2-3h |
+| 技术全景 | 技术栈、算法、工具链 | 3-4h |
+| 历史时间线 | 1950-2026，4 次 AI 浪潮 | 2-3h |
+| 工具实践 | ChatGPT、Claude、Cursor | 3-4h |
+| 伦理社会 | 偏见、隐私、治理 | 3-4h |
+| 未来趋势 | AGI 路径、2026-2040 | 2-3h |
+| + 术语表 + 案例 + 实验 | 100+ 术语、6 案例、8 实验 | - |
+
+### ⚡ 速成路径（9 篇 In-Nutshell 指南）
+
+适合工程师快速上手的实战指南：
+
+```
+阶段 1: 基础认知
+├── ① LLM 基础（Token、上下文、Temperature）
+└── ② Prompt Engineering（CoT、Few-shot）
+
+阶段 2: 核心技能
+├── ③ 模型训练（损失函数、优化器）
+├── ④ 模型推理（部署、量化 INT8）
+└── ⑤ RAG 系统（向量数据库、混合检索）
+
+阶段 3: Agent 工程
+├── ⑥ AI 智能体（ReAct、Function Calling）
+├── ⑦ AI 技能（技能注册、组合）
+└── ⑧ AI 工作流（LangGraph、错误处理）
+
+阶段 4: 生产保障
+└── ⑨ AI 测试与评估（Metrics、LLM-as-Judge）
+```
+
+### 🔬 13 大系统章节
+
+从数学基础到生产部署的完整路径：
+
+<details>
+<summary><b>📖 展开查看完整目录</b></summary>
+
+| 章节 | 核心内容 | 难度 |
+|------|----------|------|
+| **00** [AI 简介与历史](./docs/00_AI_Introduction/) | 通识导入：基础概念、技术全景、历史、工具、伦理、未来 | ⭐ |
+| **01** [基础理论](./docs/01_Fundamentals/) | 数学与计算机：线代、概率、数据结构、分布式、AI 硬件 2026 | ⭐⭐ |
+| **02** [经典机器学习](./docs/02_Machine_Learning/) | ML 基础：监督/无监督学习、特征工程、XGBoost | ⭐⭐ |
+| **03** [深度学习](./docs/03_Deep_Learning/) | 神经网络：MLP、反向传播、优化、世界模型 JEPA | ⭐⭐⭐ |
+| **04** [NLP 与大模型](./docs/04_NLP_LLMs/) | LLM 技术：Transformer、GPT-5.2/Claude 4.5、LoRA/RLHF/DPO | ⭐⭐⭐⭐ |
+| **05** [计算机视觉](./docs/05_Computer_Vision/) | 视觉 AI：CNN、YOLO、Diffusion、视频生成 2026 | ⭐⭐⭐ |
+| **06** [强化学习与智能体](./docs/06_Reinforcement_Learning/) | RL 与 Agent：DQN/PPO、Tool Calling、VLA 具身智能 | ⭐⭐⭐⭐ |
+| **07** [AI 工程化](./docs/07_AI_Engineering/) | 生产部署：vLLM、RAG 高级、MLOps、Agent 生产部署 | ⭐⭐⭐⭐ |
+| **08** [伦理与安全](./docs/08_Ethics_Safety/) | AI 安全：价值对齐、红队测试、OWASP LLM+ASI | ⭐⭐⭐ |
+| **09** [业界观点](./docs/09_talks/) | 领袖洞见：21 位 AI 领袖演讲与观点 | ⭐⭐ |
+| **10** [必读论文](./docs/10_papers/) | 经典文献：Transformer、GPT、BERT 等里程碑 | ⭐⭐⭐⭐ |
+| **11** [面试与岗位](./docs/11_interviews/) | 职业发展：21 个 AI 岗位面试指南 | ⭐⭐ |
+| **99** [行业应用](./docs/99_AI_Applications_Industry/) | 行业融合：医疗/金融/制造/零售核心应用 | ⭐⭐ |
+
+</details>
+
+### 🆕 2026 专题深度报告
+
+最新的技术趋势和行业洞察：
+
+<table>
+<tr>
+<td>
+
+- [LLM 架构 2026](./docs/04_NLP_LLMs/LLM_Architectures/LLM_Architectures.md) - GPT-5.2, Claude 4.5, 推理模型
+- [AI 硬件 2026](./docs/01_Fundamentals/AI_Hardware/AI_Hardware_2026.md) - H100/H200/B200, GPU 选型
+- [PEFT 微调 2026](./docs/04_NLP_LLMs/Fine_tuning_Techniques/PEFT_2026/) - LoRA/QLoRA/DoRA, 单卡微调 70B
+- [RAG 高级实践](./docs/07_AI_Engineering/RAG_Advanced_2026/) - 混合检索、Agentic RAG
+- [AI 编程助手](./docs/07_AI_Engineering/AI_Coding_Assistants/) - Cursor, Claude Code, Devin
+- [具身智能 2026](./docs/06_Reinforcement_Learning/Robotics_Embodied_AI/) - VLA 模型、人形机器人
+
+</td>
+<td>
+
+- [世界模型 2026](./docs/03_Deep_Learning/World_Models/) - JEPA/V-JEPA, LeCun 的 AGI 路径
+- [AI 视频生成](./docs/05_Computer_Vision/Video_Generation/) - Veo3, Kling 3.0, 后 Sora 时代
+- [AI 安全 2026](./docs/08_Ethics_Safety/AI_Security_2026/) - OWASP LLM, ASI 框架
+- [Agent 生产部署](./docs/07_AI_Engineering/Agent_Production/) - K8s, 监控, CI/CD
+- [Agent 协议 2026](./docs/06_Reinforcement_Learning/AI_Agents/Agent_Protocols_2026.md) - MCP/A2A/UCP
+- [AI 基础设施](./docs/07_AI_Engineering/AI_Infrastructure_2026.md) - SGLang, AI Gateway
+
+</td>
+</tr>
+</table>
 
 ---
 
-## 🏗️ Modern Frontend Included
+## 💾 下载到本地工具
+
+AI Guru 知识库可以作为高质量语料导入到各种 AI 工具中：
+
+### NotebookLM (Google)
+
+1. 访问 [notebooklm.google.com](https://notebooklm.google.com)
+2. 创建新项目
+3. 选择 "GitHub" 或上传 ZIP
+4. 粘贴仓库 URL：`https://github.com/your-org/ai-guru-knowledge-base`
+5. NotebookLM 会自动分析所有文档，生成摘要和问答
+
+### ima (腾讯)
+
+1. 打开 ima 应用
+2. 创建知识库
+3. 导入本地文件夹
+4. 选择下载的 `docs/` 目录
+5. 即可通过对话查询知识库内容
+
+### Claude Projects / ChatGPT GPTs
+
+```bash
+# 下载精简版（仅核心内容）
+git clone --depth 1 --filter=blob:none --sparse https://github.com/your-org/ai-guru-knowledge-base.git
+cd ai-guru-knowledge-base
+git sparse-checkout set docs/00_AI_Introduction docs/04_NLP_LLMs docs/07_AI_Engineering
+
+# 打包上传
+zip -r ai-guru-core.zip docs/
+```
+
+### Obsidian / Notion
+
+所有文档为 Markdown 格式，可直接导入：
+- **Obsidian**: 打开仓库作为 Vault
+- **Notion**: 使用 Notion 导入工具批量导入 Markdown
+
+---
+
+## 🤖 Agent 友好说明
+
+本知识库针对 AI Agent 进行了优化：
+
+- ✅ **结构化元数据**: 每个文档包含标题、描述、标签、难度
+- ✅ **清晰的层级**: 章节-文档-段落结构清晰
+- ✅ **代码可执行**: 包含可运行的代码示例
+- ✅ **中英文对照**: 技术术语保留英文，便于理解原始概念
+- ✅ **引用完整**: 论文引用、数据来源清晰标注
+- ✅ **版本控制**: Git 历史记录，可追溯更新
+
+**建议的 Agent 使用方式**:
+1. 将整个 `docs/` 目录作为知识库导入
+2. 使用文件路径作为上下文引用（如 `04_NLP_LLMs/LLM_Architectures/LLM_Architectures.md`）
+3. 结合章节 README 快速定位内容
+
+---
+
+## 🏗️ 前端项目
+
+包含现代化的知识库前端（React + Vite + TypeScript）：
 
 ```bash
 cd web/
-
-# Tech Stack
-React 18 + TypeScript + Vite
-Tailwind CSS + shadcn/ui
-Fuse.js search + Dark mode
-Responsive design
-
-# Console sub-project
-cd console/  # Management dashboard
+npm install
+npm run dev
 ```
 
-[View Frontend Details →](./web/README.md)
+特性：
+- ⚡ Vite 极速构建
+- 🎨 Tailwind CSS + shadcn/ui
+- 🔍 全文搜索 (Fuse.js)
+- 🌓 暗黑/亮色模式
+- 📱 响应式设计
+
+[查看前端详情 →](./web/README.md)
 
 ---
 
-## 🤝 Contributing
+## 🤝 贡献指南
 
-We welcome contributions!
+我们欢迎各种形式的贡献！
+
+### 如何贡献
+
+- 📝 **内容**: 添加新指南、更新过时信息
+- 🌐 **翻译**: 翻译成英文/其他语言
+- 💻 **前端**: 改进 Web 体验
+- 🐛 **Issue**: 报告问题或建议
+
+### 快速开始
 
 ```bash
-# Fork and clone
+# Fork 并克隆
 git clone https://github.com/your-username/ai-guru-knowledge-base.git
 
-# Create branch
+# 创建分支
 git checkout -b feature/your-feature
 
-# Commit and push
-git commit -m "feat: add guide on X"
+# 提交更改
+git commit -m "feat: 添加 XX 内容"
 git push origin feature/your-feature
 ```
 
-Ways to contribute:
-- 📝 Add new guides or update outdated content
-- 🌐 Translate to other languages
-- 💻 Improve the web frontend
-- 🐛 Report issues or suggest features
+[查看完整贡献指南 →](./CONTRIBUTING.md)
 
 ---
 
-## 📜 License
+## 📜 许可证
 
-MIT License - see [LICENSE](./LICENSE) for details.
+本项目采用 **MIT 许可证** - 详见 [LICENSE](./LICENSE) 文件。
 
-Referenced papers and third-party projects follow their original licenses.
+引用的论文、书籍和第三方项目遵循其原始许可证。
 
 ---
 
-## 🙏 Acknowledgments
+## 🙏 致谢
 
-Built with ❤️ by the AI community, for the AI community.
+感谢所有为本知识库做出贡献的人。
 
-<p align="center">
-  <b>AI Guru</b> — Making AI Learning Systematic, Efficient, and Accessible
+特别感谢：
+- DeepLearning.AI - 课程结构灵感
+- Hugging Face - 开源 ML 生态
+- 所有贡献者和读者
+
+---
+
+<div align="center">
+
+<p><b>AI Guru</b> — 让 AI 学习更系统、更高效、更 accessible</p>
+
+<p>
+  ⭐ <b>Star 本仓库</b> 获取更新通知 • 
+  🔔 <b>Watch</b> 关注新内容 • 
+  🍴 <b>Fork</b> 创建你的版本
 </p>
 
-<p align="center">
-  <a href="./docs">📚 Browse Docs</a> •
-  <a href="./web">🌐 Web Frontend</a> •
-  <a href="#-contributing">🤝 Contribute</a>
-</p>
+</div>

@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](./LICENSE)
 [![Last Updated](https://img.shields.io/badge/Last%20Updated-2026--04-01-blueviolet?style=flat-square)](./)
 
-[🚀 **Quick Start**](#-quick-start) • [📚 **Browse Docs**](#-documentation-structure) • [💡 **Why AI Guru?**](#-why-ai-guru) • [🤝 **Contribute**](#-contributing)
+[🚀 **Quick Start**](#-quick-start) • [📚 **Browse Docs**](#-documentation-structure) • [💡 **Why AI Guru?**](#-why-ai-guru) • [💾 **Import to Tools**](./IMPORT_GUIDE.md) • [🤝 **Contribute**](#-contributing)
 
 ---
 
