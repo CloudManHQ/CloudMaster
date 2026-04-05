@@ -1,47 +1,7 @@
 import { Link } from "react-router-dom";
 import { Folder, FileText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-// This would typically come from an API or generated at build time
-const docSections = [
-  {
-    id: "00",
-    title: "AI Introduction",
-    description: "Getting started with AI fundamentals",
-    docs: [
-      { slug: "ai-fundamentals", title: "AI Fundamentals" },
-      { slug: "ai-technology-landscape", title: "Technology Landscape" },
-      { slug: "ai-history", title: "History Timeline" },
-      { slug: "ai-tools", title: "Tools & Practice" },
-      { slug: "ai-ethics", title: "Ethics & Society" },
-      { slug: "ai-future", title: "Future Trends" },
-      { slug: "ai-learning", title: "Learning Resources" },
-    ],
-  },
-  {
-    id: "01",
-    title: "Fundamentals",
-    description: "Mathematical and computational foundations",
-    docs: [
-      { slug: "linear-algebra", title: "Linear Algebra" },
-      { slug: "probability", title: "Probability & Statistics" },
-      { slug: "data-structures", title: "Data Structures" },
-      { slug: "distributed-systems", title: "Distributed Systems" },
-      { slug: "ai-hardware", title: "AI Hardware" },
-    ],
-  },
-  {
-    id: "04",
-    title: "NLP & LLMs",
-    description: "Natural language processing and large language models",
-    docs: [
-      { slug: "transformer", title: "Transformer Architecture" },
-      { slug: "llm-architectures", title: "LLM Architectures" },
-      { slug: "fine-tuning", title: "Fine-tuning Techniques" },
-      { slug: "prompt-engineering", title: "Prompt Engineering" },
-    ],
-  },
-];
+import { docSections } from "@/data/docMap";
 
 export function DocsPage() {
   return (

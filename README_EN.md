@@ -111,7 +111,7 @@ ls -la
 ### Option 2: Web Interface
 
 ```bash
-cd ai-guru-knowledge-base/web
+cd ai-guru-knowledge-base/Web
 npm install
 npm run dev
 # Visit http://localhost:3055
@@ -154,7 +154,7 @@ Master AI full-stack systematically
 
 ⏱️ 16-20 weeks
 
-[University Course →](./docs/00_AI_Introduction/)
+[University Course →](./00_AI_Introduction/)
 
 </td>
 <td align="center" width="25%">
@@ -165,7 +165,7 @@ Understand AI capabilities & boundaries
 
 ⏱️ 8-10 hours
 
-[Industry Applications →](./docs/99_AI_Applications_Industry/)
+[Industry Applications →](./13_AI_Applications_Industry/)
 
 </td>
 <td align="center" width="25%">
@@ -176,7 +176,7 @@ Track cutting-edge technologies
 
 ⏱️ Self-paced
 
-[Essential Papers →](./docs/10_papers/)
+[Essential Papers →](./10_Papers/)
 
 </td>
 </tr>
@@ -232,19 +232,19 @@ Complete path from math to production:
 
 | Chapter | Core Content | Difficulty |
 |---------|--------------|------------|
-| **00** [AI Introduction](./docs/00_AI_Introduction/) | General education: concepts, landscape, history, tools, ethics | ⭐ |
-| **01** [Fundamentals](./docs/01_Fundamentals/) | Math & CS: Linear algebra, probability, distributed systems | ⭐⭐ |
-| **02** [Classical ML](./docs/02_Machine_Learning/) | ML basics: Supervised/unsupervised, XGBoost | ⭐⭐ |
-| **03** [Deep Learning](./docs/03_Deep_Learning/) | Neural networks: MLP, backprop, JEPA world models | ⭐⭐⭐ |
-| **04** [NLP & LLMs](./docs/04_NLP_LLMs/) | LLM tech: Transformer, GPT-5.2/Claude 4.5, LoRA/RLHF | ⭐⭐⭐⭐ |
-| **05** [Computer Vision](./docs/05_Computer_Vision/) | Vision AI: CNN, YOLO, diffusion, video generation | ⭐⭐⭐ |
-| **06** [RL & Agents](./docs/06_Reinforcement_Learning/) | RL & Agents: DQN/PPO, VLA embodied AI | ⭐⭐⭐⭐ |
-| **07** [AI Engineering](./docs/07_AI_Engineering/) | Production: vLLM, advanced RAG, MLOps | ⭐⭐⭐⭐ |
-| **08** [Ethics & Safety](./docs/08_Ethics_Safety/) | AI safety: Alignment, red teaming, OWASP LLM | ⭐⭐⭐ |
-| **09** [Industry Insights](./docs/09_talks/) | Leader insights: 21 AI pioneers | ⭐⭐ |
-| **10** [Essential Papers](./docs/10_papers/) | Classic papers: Transformer, GPT, BERT | ⭐⭐⭐⭐ |
-| **11** [Interviews](./docs/11_interviews/) | Career guides: 21 AI role interviews | ⭐⭐ |
-| **99** [Industry Apps](./docs/99_AI_Applications_Industry/) | Verticals: Healthcare/Finance/Manufacturing | ⭐⭐ |
+| **00** [AI Introduction](./00_AI_Introduction/) | General education: concepts, landscape, history, tools, ethics | ⭐ |
+| **01** [Fundamentals](./01_Fundamentals/) | Math & CS: Linear algebra, probability, distributed systems | ⭐⭐ |
+| **02** [Classical ML](./02_Machine_Learning/) | ML basics: Supervised/unsupervised, XGBoost | ⭐⭐ |
+| **03** [Deep Learning](./03_Deep_Learning/) | Neural networks: MLP, backprop, JEPA world models | ⭐⭐⭐ |
+| **04** [NLP & LLMs](./04_NLP_LLMs/) | LLM tech: Transformer, GPT-5.2/Claude 4.5, LoRA/RLHF | ⭐⭐⭐⭐ |
+| **05** [Computer Vision](./05_Computer_Vision/) | Vision AI: CNN, YOLO, diffusion, video generation | ⭐⭐⭐ |
+| **06** [RL & Agents](./06_Reinforcement_Learning/) | RL & Agents: DQN/PPO, VLA embodied AI | ⭐⭐⭐⭐ |
+| **07** [AI Engineering](./07_AI_Engineering/) | Production: vLLM, advanced RAG, MLOps | ⭐⭐⭐⭐ |
+| **08** [Ethics & Safety](./08_Ethics_Safety/) | AI safety: Alignment, red teaming, OWASP LLM | ⭐⭐⭐ |
+| **09** [Industry Insights](./09_Talks/) | Leader insights: 21 AI pioneers | ⭐⭐ |
+| **10** [Essential Papers](./10_Papers/) | Classic papers: Transformer, GPT, BERT | ⭐⭐⭐⭐ |
+| **11** [Interviews](./11_Interviews/) | Career guides: 21 AI role interviews | ⭐⭐ |
+| **13** [Industry Apps](./13_AI_Applications_Industry/) | Verticals: Healthcare/Finance/Manufacturing | ⭐⭐ |
 
 </details>
 
@@ -252,16 +252,16 @@ Complete path from math to production:
 
 Latest tech trends and industry insights:
 
-- [LLM Architectures 2026](./docs/04_NLP_LLMs/LLM_Architectures/LLM_Architectures.md) - GPT-5.2, Claude 4.5, reasoning models
-- [AI Hardware 2026](./docs/01_Fundamentals/AI_Hardware/AI_Hardware_2026.md) - H100/H200/B200 comparison
-- [PEFT Fine-tuning 2026](./docs/04_NLP_LLMs/Fine_tuning_Techniques/PEFT_2026/) - LoRA/QLoRA/DoRA, 70B on single GPU
-- [Advanced RAG](./docs/07_AI_Engineering/RAG_Advanced_2026/) - Hybrid search, Agentic RAG
-- [AI Coding Assistants](./docs/07_AI_Engineering/AI_Coding_Assistants/) - Cursor, Claude Code, Devin
-- [Embodied AI 2026](./docs/06_Reinforcement_Learning/Robotics_Embodied_AI/) - VLA models, humanoid robots
-- [World Models 2026](./docs/03_Deep_Learning/World_Models/) - JEPA/V-JEPA, LeCun's AGI path
-- [AI Video Generation](./docs/05_Computer_Vision/Video_Generation/) - Veo3, Kling 3.0, post-Sora
-- [AI Security 2026](./docs/08_Ethics_Safety/AI_Security_2026/) - OWASP LLM, ASI framework
-- [Agent Production](./docs/07_AI_Engineering/Agent_Production/) - K8s, monitoring, CI/CD
+- [LLM Architectures 2026](./04_NLP_LLMs/LLM_Architectures/LLM_Architectures.md) - GPT-5.2, Claude 4.5, reasoning models
+- [AI Hardware 2026](./01_Fundamentals/AI_Hardware/AI_Hardware_2026.md) - H100/H200/B200 comparison
+- [PEFT Fine-tuning 2026](./04_NLP_LLMs/Fine_tuning_Techniques/PEFT_2026/) - LoRA/QLoRA/DoRA, 70B on single GPU
+- [Advanced RAG](./07_AI_Engineering/RAG_Advanced_2026/) - Hybrid search, Agentic RAG
+- [AI Coding Assistants](./07_AI_Engineering/AI_Coding_Assistants/) - Cursor, Claude Code, Devin
+- [Embodied AI 2026](./06_Reinforcement_Learning/Robotics_Embodied_AI/) - VLA models, humanoid robots
+- [World Models 2026](./03_Deep_Learning/World_Models/) - JEPA/V-JEPA, LeCun's AGI path
+- [AI Video Generation](./05_Computer_Vision/Video_Generation/) - Veo3, Kling 3.0, post-Sora
+- [AI Security 2026](./08_Ethics_Safety/AI_Security_2026/) - OWASP LLM, ASI framework
+- [Agent Production](./07_AI_Engineering/Agent_Production/) - K8s, monitoring, CI/CD
 
 ---
 
@@ -340,7 +340,7 @@ Features:
 - 🌓 Dark/light mode
 - 📱 Responsive design
 
-[View Frontend Details →](./web/README.md)
+[View Frontend Details →](./Web/README.md)
 
 ---
 

@@ -1,49 +1,18 @@
 import { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { Search, FileText, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Fuse from "fuse.js";
+import { allDocs } from "@/data/docMap";
 
-// Mock data - in production this would be fetched from an API or search index
-const searchIndex = [
-  {
-    title: "AI Fundamentals",
-    slug: "00-ai-fundamentals",
-    excerpt: "Introduction to AI concepts, types, and applications...",
-    category: "Introduction",
-  },
-  {
-    title: "Technology Landscape",
-    slug: "00-ai-technology-landscape",
-    excerpt: "Overview of AI technology stack and ecosystem...",
-    category: "Introduction",
-  },
-  {
-    title: "History of AI",
-    slug: "00-ai-history",
-    excerpt: "From 1950 to 2026, the evolution of artificial intelligence...",
-    category: "Introduction",
-  },
-  {
-    title: "Transformer Architecture",
-    slug: "04-transformer",
-    excerpt: "Attention is all you need - the foundation of modern NLP...",
-    category: "NLP & LLMs",
-  },
-  {
-    title: "LLM Architectures",
-    slug: "04-llm-architectures",
-    excerpt: "GPT, Claude, Llama, and other large language models...",
-    category: "NLP & LLMs",
-  },
-  {
-    title: "Fine-tuning Techniques",
-    slug: "04-fine-tuning",
-    excerpt: "LoRA, QLoRA, and parameter-efficient fine-tuning...",
-    category: "NLP & LLMs",
-  },
-];
+// Build search index from the shared docMap
+const searchIndex = allDocs.map((doc) => ({
+  title: doc.title,
+  slug: `${doc.categoryId}-${doc.slug}`,
+  excerpt: doc.description,
+  category: doc.category,
+}));
 
 const fuseOptions = {
   keys: ["title", "excerpt", "category"],
@@ -102,7 +71,8 @@ export function SearchPage() {
 
         <div className="space-y-4">
           {results.map(({ item, score }) => (
-            <Card key={item.slug} className="hover:bg-muted/50 transition-colors cursor-pointer">
+            <Link key={item.slug} to={`/docs/${item.slug}`}>
+            <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
@@ -124,6 +94,7 @@ export function SearchPage() {
                 </div>
               </CardContent>
             </Card>
+            </Link>
           ))}
         </div>
 

@@ -55,7 +55,7 @@ This framework provides standardized methodologies for benchmarking and evaluati
 ## Framework Structure
 
 ```
-12_agent_evaluation/
+12_Agent_Evaluation/
 │
 ├── Testing_Methodologies/          # How to test agents
 │   ├── Testing_Framework.md        # Core testing approaches

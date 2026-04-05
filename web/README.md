@@ -66,7 +66,7 @@ web/
 ```bash
 # Clone the repository
 git clone https://github.com/your-org/ai-guru-knowledge-base.git
-cd ai-guru-knowledge-base/web
+cd ai-guru-knowledge-base/Web
 
 # Install dependencies
 pnpm install

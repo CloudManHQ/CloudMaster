@@ -64,8 +64,8 @@ npm run dev
 |-----------|-----------|-------------------|
 | **运维/开发工程师** | [9 篇速成指南](#-in-nutshell-guides) | 15-20 hours |
 | **大学生/自学者** | [00_AI_Introduction](./00_AI_Introduction/) | 16-20 hours |
-| **产品经理** | [AI应用与行业融合](./99_AI_Applications_Industry/) | 8-10 hours |
-| **研究人员** | [10_papers](./10_papers/) + [03_Deep_Learning](./03_Deep_Learning/) | Self-paced |
+| **产品经理** | [AI应用与行业融合](./13_AI_Applications_Industry/) | 8-10 hours |
+| **研究人员** | [10_Papers](./10_Papers/) + [03_Deep_Learning](./03_Deep_Learning/) | Self-paced |
 | **教育者** | [Complete Curriculum](#-university-curriculum) | Full semester |
 
 ---
@@ -154,7 +154,7 @@ Layer 4: Expansion
 ├── 09 业界观点 (21 AI Leaders' insights)
 ├── 10 必读论文 (Transformer, GPT, BERT milestones)
 ├── 11 面试与岗位 (21 role interview guides)
-└── 99 行业应用 (Healthcare, Finance, Manufacturing, Retail)
+└── 13 行业应用 (Healthcare, Finance, Manufacturing, Retail)
 ```
 
 ---
@@ -194,7 +194,7 @@ web/
 └── 🎨 Tailwind CSS + shadcn/ui
 ```
 
-**[View Frontend README →](./web/README.md)**
+**[View Frontend README →](./Web/README.md)**
 
 ---
 

@@ -33,24 +33,13 @@ export default defineConfig(({ mode }) => ({
     sourcemap: true,
   },
   server: {
-    port: 4567,
-    host: "0.0.0.0",
-    strictPort: true,
+    port: 3055,
+    host: "0.0.0.0",  // Listen on all addresses
+    strictPort: true,  // Fail if port is in use
     open: true,
-    fs: {
-      // Allow serving files from project root (parent of Web/)
-      allow: [".."],
-    },
-    proxy: {
-      // Proxy /docs-content/ to serve markdown files from project root
-      "/docs-content": {
-        target: "http://localhost:4567",
-        rewrite: (p) => p.replace(/^\/docs-content/, "/..")
-      },
-    },
   },
   preview: {
-    port: 4567,
+    port: 3055,
     host: "0.0.0.0",
     strictPort: true,
   },

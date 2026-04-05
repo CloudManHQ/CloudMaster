@@ -111,7 +111,7 @@ ls -la
 ### 方式二：Web 端浏览
 
 ```bash
-cd ai-guru-knowledge-base/web
+cd ai-guru-knowledge-base/Web
 npm install
 npm run dev
 # 访问 http://localhost:3055
@@ -154,7 +154,7 @@ curl -L -o ai-guru.zip https://github.com/your-org/ai-guru-knowledge-base/archiv
 
 ⏱️ 16-20 周
 
-[大学课程 →](./docs/00_AI_Introduction/)
+[大学课程 →](./00_AI_Introduction/)
 
 </td>
 <td align="center" width="25%">
@@ -165,7 +165,7 @@ curl -L -o ai-guru.zip https://github.com/your-org/ai-guru-knowledge-base/archiv
 
 ⏱️ 8-10 小时
 
-[行业应用 →](./docs/99_AI_Applications_Industry/)
+[行业应用 →](./13_AI_Applications_Industry/)
 
 </td>
 <td align="center" width="25%">
@@ -176,7 +176,7 @@ curl -L -o ai-guru.zip https://github.com/your-org/ai-guru-knowledge-base/archiv
 
 ⏱️ 自主学习
 
-[必读论文 →](./docs/10_papers/)
+[必读论文 →](./10_Papers/)
 
 </td>
 </tr>
@@ -232,19 +232,19 @@ curl -L -o ai-guru.zip https://github.com/your-org/ai-guru-knowledge-base/archiv
 
 | 章节 | 核心内容 | 难度 |
 |------|----------|------|
-| **00** [AI 简介与历史](./docs/00_AI_Introduction/) | 通识导入：基础概念、技术全景、历史、工具、伦理、未来 | ⭐ |
-| **01** [基础理论](./docs/01_Fundamentals/) | 数学与计算机：线代、概率、数据结构、分布式、AI 硬件 2026 | ⭐⭐ |
-| **02** [经典机器学习](./docs/02_Machine_Learning/) | ML 基础：监督/无监督学习、特征工程、XGBoost | ⭐⭐ |
-| **03** [深度学习](./docs/03_Deep_Learning/) | 神经网络：MLP、反向传播、优化、世界模型 JEPA | ⭐⭐⭐ |
-| **04** [NLP 与大模型](./docs/04_NLP_LLMs/) | LLM 技术：Transformer、GPT-5.2/Claude 4.5、LoRA/RLHF/DPO | ⭐⭐⭐⭐ |
-| **05** [计算机视觉](./docs/05_Computer_Vision/) | 视觉 AI：CNN、YOLO、Diffusion、视频生成 2026 | ⭐⭐⭐ |
-| **06** [强化学习与智能体](./docs/06_Reinforcement_Learning/) | RL 与 Agent：DQN/PPO、Tool Calling、VLA 具身智能 | ⭐⭐⭐⭐ |
-| **07** [AI 工程化](./docs/07_AI_Engineering/) | 生产部署：vLLM、RAG 高级、MLOps、Agent 生产部署 | ⭐⭐⭐⭐ |
-| **08** [伦理与安全](./docs/08_Ethics_Safety/) | AI 安全：价值对齐、红队测试、OWASP LLM+ASI | ⭐⭐⭐ |
-| **09** [业界观点](./docs/09_talks/) | 领袖洞见：21 位 AI 领袖演讲与观点 | ⭐⭐ |
-| **10** [必读论文](./docs/10_papers/) | 经典文献：Transformer、GPT、BERT 等里程碑 | ⭐⭐⭐⭐ |
-| **11** [面试与岗位](./docs/11_interviews/) | 职业发展：21 个 AI 岗位面试指南 | ⭐⭐ |
-| **99** [行业应用](./docs/99_AI_Applications_Industry/) | 行业融合：医疗/金融/制造/零售核心应用 | ⭐⭐ |
+| **00** [AI 简介与历史](./00_AI_Introduction/) | 通识导入：基础概念、技术全景、历史、工具、伦理、未来 | ⭐ |
+| **01** [基础理论](./01_Fundamentals/) | 数学与计算机：线代、概率、数据结构、分布式、AI 硬件 2026 | ⭐⭐ |
+| **02** [经典机器学习](./02_Machine_Learning/) | ML 基础：监督/无监督学习、特征工程、XGBoost | ⭐⭐ |
+| **03** [深度学习](./03_Deep_Learning/) | 神经网络：MLP、反向传播、优化、世界模型 JEPA | ⭐⭐⭐ |
+| **04** [NLP 与大模型](./04_NLP_LLMs/) | LLM 技术：Transformer、GPT-5.2/Claude 4.5、LoRA/RLHF/DPO | ⭐⭐⭐⭐ |
+| **05** [计算机视觉](./05_Computer_Vision/) | 视觉 AI：CNN、YOLO、Diffusion、视频生成 2026 | ⭐⭐⭐ |
+| **06** [强化学习与智能体](./06_Reinforcement_Learning/) | RL 与 Agent：DQN/PPO、Tool Calling、VLA 具身智能 | ⭐⭐⭐⭐ |
+| **07** [AI 工程化](./07_AI_Engineering/) | 生产部署：vLLM、RAG 高级、MLOps、Agent 生产部署 | ⭐⭐⭐⭐ |
+| **08** [伦理与安全](./08_Ethics_Safety/) | AI 安全：价值对齐、红队测试、OWASP LLM+ASI | ⭐⭐⭐ |
+| **09** [业界观点](./09_Talks/) | 领袖洞见：21 位 AI 领袖演讲与观点 | ⭐⭐ |
+| **10** [必读论文](./10_Papers/) | 经典文献：Transformer、GPT、BERT 等里程碑 | ⭐⭐⭐⭐ |
+| **11** [面试与岗位](./11_Interviews/) | 职业发展：21 个 AI 岗位面试指南 | ⭐⭐ |
+| **13** [行业应用](./13_AI_Applications_Industry/) | 行业融合：医疗/金融/制造/零售核心应用 | ⭐⭐ |
 
 </details>
 
@@ -256,22 +256,22 @@ curl -L -o ai-guru.zip https://github.com/your-org/ai-guru-knowledge-base/archiv
 <tr>
 <td>
 
-- [LLM 架构 2026](./docs/04_NLP_LLMs/LLM_Architectures/LLM_Architectures.md) - GPT-5.2, Claude 4.5, 推理模型
-- [AI 硬件 2026](./docs/01_Fundamentals/AI_Hardware/AI_Hardware_2026.md) - H100/H200/B200, GPU 选型
-- [PEFT 微调 2026](./docs/04_NLP_LLMs/Fine_tuning_Techniques/PEFT_2026/) - LoRA/QLoRA/DoRA, 单卡微调 70B
-- [RAG 高级实践](./docs/07_AI_Engineering/RAG_Advanced_2026/) - 混合检索、Agentic RAG
-- [AI 编程助手](./docs/07_AI_Engineering/AI_Coding_Assistants/) - Cursor, Claude Code, Devin
-- [具身智能 2026](./docs/06_Reinforcement_Learning/Robotics_Embodied_AI/) - VLA 模型、人形机器人
+- [LLM 架构 2026](./04_NLP_LLMs/LLM_Architectures/LLM_Architectures.md) - GPT-5.2, Claude 4.5, 推理模型
+- [AI 硬件 2026](./01_Fundamentals/AI_Hardware/AI_Hardware_2026.md) - H100/H200/B200, GPU 选型
+- [PEFT 微调 2026](./04_NLP_LLMs/Fine_tuning_Techniques/PEFT_2026/) - LoRA/QLoRA/DoRA, 单卡微调 70B
+- [RAG 高级实践](./07_AI_Engineering/RAG_Advanced_2026/) - 混合检索、Agentic RAG
+- [AI 编程助手](./07_AI_Engineering/AI_Coding_Assistants/) - Cursor, Claude Code, Devin
+- [具身智能 2026](./06_Reinforcement_Learning/Robotics_Embodied_AI/) - VLA 模型、人形机器人
 
 </td>
 <td>
 
-- [世界模型 2026](./docs/03_Deep_Learning/World_Models/) - JEPA/V-JEPA, LeCun 的 AGI 路径
-- [AI 视频生成](./docs/05_Computer_Vision/Video_Generation/) - Veo3, Kling 3.0, 后 Sora 时代
-- [AI 安全 2026](./docs/08_Ethics_Safety/AI_Security_2026/) - OWASP LLM, ASI 框架
-- [Agent 生产部署](./docs/07_AI_Engineering/Agent_Production/) - K8s, 监控, CI/CD
-- [Agent 协议 2026](./docs/06_Reinforcement_Learning/AI_Agents/Agent_Protocols_2026.md) - MCP/A2A/UCP
-- [AI 基础设施](./docs/07_AI_Engineering/AI_Infrastructure_2026.md) - SGLang, AI Gateway
+- [世界模型 2026](./03_Deep_Learning/World_Models/) - JEPA/V-JEPA, LeCun 的 AGI 路径
+- [AI 视频生成](./05_Computer_Vision/Video_Generation/) - Veo3, Kling 3.0, 后 Sora 时代
+- [AI 安全 2026](./08_Ethics_Safety/AI_Security_2026/) - OWASP LLM, ASI 框架
+- [Agent 生产部署](./07_AI_Engineering/Agent_Production/) - K8s, 监控, CI/CD
+- [Agent 协议 2026](./06_Reinforcement_Learning/AI_Agents/Agent_Protocols_2026.md) - MCP/A2A/UCP
+- [AI 基础设施](./07_AI_Engineering/AI_Infrastructure_2026.md) - SGLang, AI Gateway
 
 </td>
 </tr>
@@ -354,7 +354,7 @@ npm run dev
 - 🌓 暗黑/亮色模式
 - 📱 响应式设计
 
-[查看前端详情 →](./web/README.md)
+[查看前端详情 →](./Web/README.md)
 
 ---
 

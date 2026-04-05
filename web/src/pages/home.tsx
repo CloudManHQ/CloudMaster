@@ -7,7 +7,7 @@ const features = [
   {
     icon: BookOpen,
     title: "Comprehensive Documentation",
-    description: "Access 290+ AI documentation files covering fundamentals to advanced topics.",
+    description: "Access 300+ AI documentation files covering fundamentals to production deployment.",
   },
   {
     icon: Search,
@@ -37,10 +37,10 @@ const features = [
 ];
 
 const stats = [
-  { label: "Documentation Files", value: "290+" },
-  { label: "Knowledge Chapters", value: "13" },
-  { label: "Technical Topics", value: "70+" },
-  { label: "Learning Paths", value: "9" },
+  { label: "Documentation Files", value: "300+" },
+  { label: "Knowledge Chapters", value: "14" },
+  { label: "AI Concepts", value: "800+" },
+  { label: "Learning Paths", value: "6" },
 ];
 
 export function HomePage() {

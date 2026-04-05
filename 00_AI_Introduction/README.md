@@ -154,7 +154,7 @@
         ↓
 07_AI_Engineering (工程化与部署)
         ↓
-99_AI_Applications_Industry (行业应用)
+13_AI_Applications_Industry (行业应用)
 ```
 
 本章节是整本教材的导入部分，为后续深入学习奠定基础。
