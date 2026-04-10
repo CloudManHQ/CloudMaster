@@ -39,6 +39,9 @@ flowchart LR
     C --> D[AI 技能]
     D --> E[AI 工作流]
     E --> F[AI 测试]
+    F --> G[AI 网关]
+    G --> H[AI Ops]
+    H --> I[云产品运维]
 ```
 
 | 主题 | 描述 | 速成文档 |
@@ -49,7 +52,9 @@ flowchart LR
 | AI 技能 | 构建智能体的可复用能力 | [Skills-in-nutshell.md](./AI_Skills/Skills-in-nutshell.md) |
 | AI 工作流 | 编排生产级自动化流水线 | [Workflow-in-nutshell.md](./AI_Workflow/Workflow-in-nutshell.md) |
 | **AI 测试** | 测试、评估和验证 AI 系统 | [AI-Testing-in-nutshell.md](./AI_Testing/AI-Testing-in-nutshell.md) |
-| **OpenClaw 生态** | AI Agent 框架，自主执行任务的智能助手 | [OpenClaw_Ecosystem.md](./OpenClaw_Ecosystem/OpenClaw_Ecosystem.md) |
+| **AI 网关** | 企业 AI 统一入口，智能路由 | [Gateway-in-nutshell.md](./AI_Gateway/Gateway-in-nutshell.md) |
+| **AI Ops** | 智能监控、异常检测、自愈 | [AIOps-in-nutshell.md](./AI_Ops/AIOps-in-nutshell.md) |
+| **云产品运维** | 云产品运维 Agent 架构 | [CloudOps-in-nutshell.md](./Cloud_Product_Ops/CloudOps-in-nutshell.md) |
 
 ---
 
@@ -69,6 +74,9 @@ flowchart LR
 | Agent 生产部署 (Agent Production) | 实战 | 企业级Agent架构、K8s部署、监控、CI/CD最佳实践 | [Agent_Production/](./Agent_Production/) |
 | RAG高级实践 2026 (RAG Advanced) | 进阶 | 混合检索、重排序、Agentic RAG、上下文压缩 | [RAG_Advanced_2026/](./RAG_Advanced_2026/) |
 | AI编程助手 2026 (AI Coding Assistants) | 实战 | Cursor/Claude Code/Windsurf/Devin对比选型 | [AI_Coding_Assistants/](./AI_Coding_Assistants/) |
+| **AI 网关 2026** (AI Gateway) | 实战 | 企业级AI统一入口、智能路由、安全管控、成本优化、多租户支持 | [AI_Gateway_2026.md](./AI_Gateway/AI_Gateway_2026.md) |
+| **AI Ops 2026** (AI Ops) | 进阶 | 智能监控、异常检测、根因分析、自动修复、容量规划 | [AI_Ops_2026.md](./AI_Ops/AI_Ops_2026.md) |
+| **云产品运维 2026** (Cloud Product Ops) | 实战 | 云产品运维Agent架构、工具系统、安全权限管理、生产部署 | [Cloud_Product_Ops_2026.md](./Cloud_Product_Ops/Cloud_Product_Ops_2026.md) |
 
 ## 前置知识 (Prerequisites)
 

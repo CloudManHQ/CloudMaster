@@ -12,6 +12,8 @@
 2. [分层概念依赖](#二分层概念依赖)
 3. [学习路径推荐](#三学习路径推荐)
 4. [概念映射到文档](#四概念映射到文档)
+5. [开源选型对比](#五开源选型对比)
+6. [专业领域深度图谱](#六专业领域深度图谱)
 
 ---
 
@@ -929,5 +931,563 @@ A: 12_Agent_Evaluation/
 
 ---
 
-*Last updated: 2026-04-03*
-*全面更新: 从 8 大模块扩展至 13 大模块 (新增 NLP_Foundations、Computer_Vision、RAG_Systems、AI_for_Science)，新增 200+ 概念，12 条依赖链，6 条学习路径，覆盖 RL 基础、Tokenization/Embedding、GRPO/RLVR、Graph RAG、SAM、3DGS、Coding Agent、LLMOps、Evaluation Benchmarks、Feature Engineering、Privacy Computing、AI for Science 等全部关键领域*
+---
+
+## 五、开源选型对比
+
+### 5.1 向量数据库对比
+
+#### 5.1.1 核心向量数据库横向对比
+
+| 维度 | **Milvus** | **Qdrant** | **Weaviate** | **Pinecone** | **Chroma** | **FAISS** |
+|------|-----------|-----------|--------------|--------------|------------|-----------|
+| **类型** | 开源 | 开源 | 开源 | 云服务 | 开源 | 开源 (Meta) |
+| **语言** | Go | Rust | Go | 托管 | Python | C++/Python |
+| **支持向量维度** | 无限制 | 无限制 | 无限制 | 无限制 | 无限制 | 无限制 |
+| **索引算法** | HNSW/DiskANN/IVF | HNSW | HNSW | HNSW | HNSW | IVF/HSNW |
+| **混合搜索** | ✅ Dense+Sparse | ✅ Sparse+Dense | ✅ 原生混合 | ✅ 需配置 | ❌ | ❌ |
+| **全文检索** | ✅ BM25 | ✅ 有限 | ✅ 原生 | ✅ | ❌ | ❌ |
+| **多租户** | ✅ Collection | ✅ Named vector | ✅ Namespace | ✅ | ❌ | ❌ |
+| **云原生** | ✅ K8s | ✅ Docker/K8s | ✅ K8s | ✅ 原生 | ❌ | ❌ |
+| **分布式** | ✅ Mishards | ✅ | ✅ | ✅ | ❌ | ❌ |
+| **GPU 加速** | ✅ | ✅ | ❌ | ✅ | ❌ | ✅ |
+| **延迟** | 低 | 极低 | 中 | 低 | 极低 | 极低 |
+| **数据规模** | 十亿级 | 十亿级 | 亿级 | 十亿级 | 百万级 | 百万级 |
+| **许可** | Apache 2.0 | Apache 2.0 | BSD | 专有 | Apache 2.0 | Apache 2.0 |
+| **生产案例** | Zilliz Cloud | Qdrant Cloud | Seasearch | 多家企事业 | 小规模 | Meta 内部 |
+
+#### 5.1.2 向量数据库选型决策树
+
+```
+需要向量检索？
+├── 是
+│   ├── 需要混合搜索（向量+关键词）？
+│   │   ├── 是 → Qdrant (性能最佳) / Weaviate (功能全面) / Milvus (生态成熟)
+│   │   └── 否 → FAISS (轻量) / Chroma (简单原型)
+│   │
+│   ├── 数据规模？
+│   │   ├── 亿级以上 → Milvus (分布式) / Pinecone (云托管)
+│   │   └── 千万级以下 → Qdrant / Weaviate / FAISS
+│   │
+│   ├── 需要云原生/K8s？
+│   │   ├── 是 → Qdrant / Milvus / Weaviate
+│   │   └── 否 → Chroma (本地) / FAISS (嵌入式)
+│   │
+│   └── 需要 GPU 加速？
+│       ├── 是 → Milvus / Qdrant / FAISS
+│       └── 否 → Weaviate / Chroma
+│
+└── 否 → 传统关系型 + 插件向量扩展
+```
+
+#### 5.1.3 关键指标对比
+
+```
+向量数据库性能基准 (百万向量, 768维, HNSW)
+
+Qdrant:     ████████████████████ 99.9% < 10ms
+Milvus:     ███████████████████░ 99.9% < 15ms
+Weaviate:   ██████████████████░░ 99.9% < 25ms
+FAISS:      ████████████████████ 99.9% < 8ms (内存)
+Pinecone:   ███████████████████░ 99.9% < 12ms
+
+延迟: FAISS > Qdrant > Pinecone > Milvus > Weaviate
+功能: Weaviate > Milvus > Qdrant > Pinecone > FAISS
+运维: Pinecone > Qdrant > Milvus > Weaviate > FAISS
+```
+
+---
+
+### 5.2 LLM 推理引擎对比
+
+#### 5.2.1 推理引擎横向对比
+
+| 维度 | **vLLM** | **SGLang** | **TensorRT-LLM** | **llama.cpp** | **Ollama** | **LM Studio** | **OAI Proxy** |
+|------|---------|-----------|-----------------|--------------|-----------|--------------|--------------|
+| **开发方** | UC Berkeley | SGLang团队 | NVIDIA | Georgi Gerganov | Ollama团队 | LM Studio | OpenAI兼容 |
+| **语言** | Python | Python | C++/CUDA | C++ | Go | Electron | Go |
+| **量化支持** | FP16/INT8/INT4 | FP16/INT8 | FP8/INT8/INT4 | 全量化 | INT4/FP16 | INT4/FP16 | 取决于后端 |
+| **批处理** | Continuous Batching | RadixBatching | In-Flight Batching | 静态 | 简单 | 简单 | N/A |
+| **Prefix Caching** | ✅ Chunked Prefill | ✅ 智能 | ✅ | ❌ | ❌ | ❌ | N/A |
+| **投机解码** | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | N/A |
+| **多模态** | ✅ | ✅ (LLaVA) | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **适用场景** | 通用推理 | 结构化输出 | NVIDIA GPU | CPU/Mac | 本地运行 | GUI本地 | API网关 |
+| **部署难度** | 中 | 中 | 高 | 低 | 极低 | 极低 | 低 |
+| **吞吐量** | 极高 | 极高 | 极高 | 低 | 低 | 低 | 取决于后端 |
+| **许可** | Apache 2.0 | Apache 2.0 | NVIDIA EULA | MIT | MIT | 专有 | Apache 2.0 |
+
+#### 5.2.2 推理引擎选型决策树
+
+```
+部署环境？
+├── NVIDIA 生产 GPU (A100/H100)
+│   ├── 需要极致性能 → TensorRT-LLM
+│   ├── 需要灵活调试 → vLLM (PagedAttention) / SGLang
+│   └── 需要结构化输出 → SGLang (RadixAttention) > vLLM
+│
+├── 消费级 GPU (4090/3090)
+│   ├── 需要高吞吐 → vLLM (INT4/INT8)
+│   └── 需要便捷 → Ollama / LM Studio
+│
+├── CPU / Apple Silicon
+│   └── llama.cpp (量化 + Metal GPU)
+│
+└── API 代理 / 网关
+    └── OAI Proxy (兼容 OpenAI 格式)
+```
+
+#### 5.2.3 性能对比基准
+
+```
+吞吐量对比 (tokens/sec, A100 80GB, Llama-3 70B)
+
+TensorRT-LLM: ██████████████████████████████ 8000+ tok/s
+vLLM:         ███████████████████████████░ 6500+ tok/s
+SGLang:       ████████████████████████████░ 6000+ tok/s (结构化)
+llama.cpp:    ████░░░░░░░░░░░░░░░░░░░░░░░░░░  150+ tok/s (INT4, M2 Max)
+
+内存效率 (GB, Llama-3 70B)
+vLLM (FP16):  ██████████████████████████████ 140GB
+vLLM (INT4):  ██████████████░░░░░░░░░░░░░░░░░░  40GB
+llama.cpp:    ████████████░░░░░░░░░░░░░░░░░░░░  35GB
+```
+
+---
+
+### 5.3 Agent 框架对比
+
+#### 5.3.1 主流框架横向对比
+
+| 维度 | **LangChain** | **LangGraph** | **CrewAI** | **AutoGen** | **OpenAI Agents SDK** | **LlamaIndex** | **Dify** | **Coze** |
+|------|-------------|--------------|-----------|------------|----------------------|----------------|----------|----------|
+| **范式** | Chain/LLM | Graph/DAG | Role+Task | Multi-Agent | Function/Agent | Query/RAG | Flow/Visual | Flow/Visual |
+| **多 Agent** | ✅ LangChain Agents | ✅ | ✅ 原生 | ✅ Conversational | ✅ Handoffs | ❌ | ✅ | ✅ |
+| **MCP 支持** | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ |
+| **Tool Use** | ✅ | ✅ | ✅ | ✅ | ✅ 原生 | ✅ | ✅ | ✅ |
+| **持久化** | Memory/History | Checkpointing | 有限 | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **可视化** | LangSmith | LangSmith | 基础 | 有限 | 有限 | 有限 | ✅ 画布 | ✅ 画布 |
+| **RAG 内置** | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ 原生 | ✅ | ✅ |
+| **状态管理** | 外部 | ✅ 原生 | 简单 | 简单 | ✅ | ✅ | ✅ | ✅ |
+| **学习曲线** | 陡 | 陡 | 平缓 | 中 | 平缓 | 中 | 平缓 | 平缓 |
+| **生产成熟度** | 高 | 中 | 中 | 中 | 高 | 高 | 高 | 高 (Coze US) |
+| **部署方式** | 自托管 | 自托管 | 自托管 | 自托管 | 自托管/云 | 自托管 | 自托管/云 | 云服务 |
+| **许可** | MIT | MIT | Apache 2.0 | MIT | OpenAI TOS | MIT | Apache 2.0 | 专有 |
+
+#### 5.3.2 框架选型决策树
+
+```
+目标场景？
+├── 构建复杂多步 Agent 工作流
+│   ├── 需要状态持久化/回滚 → LangGraph (Checkpointing)
+│   ├── 多 Agent 协作/角色分工 → CrewAI (Role-Based)
+│   └── 多 Agent 对话/辩论 → AutoGen (Conversational)
+│
+├── 构建 RAG 系统
+│   ├── 需要深度定制 → LlamaIndex (Query Engine)
+│   └── 需要快速原型 → LangChain (High-Level)
+│
+├── 企业级应用/低代码
+│   ├── 需要可视化编排 → Dify (自托管) / Coze (云)
+│   └── 需要 API 优先 → LangChain/LangGraph
+│
+└── 简单工具调用
+    └── OpenAI Agents SDK (轻量)
+```
+
+#### 5.3.3 架构哲学对比
+
+```
+LangChain:      " Everything is a Chain " → 组合式，但复杂
+LangGraph:      " Everything is a Graph " → DAG 状态机，适合复杂逻辑
+CrewAI:         " Role + Task + Agent " → 模仿人类团队，适合多角色协作
+AutoGen:        " Agent = LLM + Human + Tool " → 对话式协作，适合研究
+LlamaIndex:     " Data + LLM " → 以数据为中心的 Agent
+OpenAI SDK:     " Function + Handoff " → 极简，工具优先
+Dify/Coze:      " Visual + Node " → 低代码，非技术人员友好
+```
+
+---
+
+### 5.4 Embedding 模型对比
+
+#### 5.4.1 文本 Embedding 模型横向对比
+
+| 模型 | 开发方 | 维度 | 上下文 | MTEB 得分 | 多语言 | 开源 | 备注 |
+|------|--------|------|--------|-----------|--------|------|------|
+| **text-embedding-3-large** | OpenAI | 3072 | 8K | ~65 | 英文为主 | ❌ | 闭源 SaaS |
+| **text-embedding-3-small** | OpenAI | 1536 | 8K | ~62 | 英文为主 | ❌ | 闭源 SaaS |
+| **bge-m3** | BAAI | 1024 | 8192 | ~64 | 100+ | ✅ | 多语言最强开源 |
+| **bge-large-en-v1.5** | BAAI | 1024 | 512 | ~63 | 英文 | ✅ | 英文 SOTA 开源 |
+| **gte-Qwen2** | Alibaba | 1024 | 8192 | ~66 | 中英 | ✅ | 开源中文最强 |
+| **e5-mistral-7b** | Microsoft | 1024 | 4096 | ~66 | 英文 | ✅ | 大型高效 |
+| **jina-embeddings-v3** | Jina AI | 1024 | 8192 | ~64 | 中英 | ❌ | 闭源 SaaS |
+| **nomic-embed-text-v1.5** | Nomic | 768 | 8192 | ~62 | 英文 | ✅ | 可解释 |
+| **snowflake-arctic-embed-l** | Snowflake | 1024 | 512 | ~63 | 英文 | ✅ | Apache 2.0 |
+| **gte-base-zh** | Alibaba | 768 | 8192 | ~63 | 中英 | ✅ | 中文开源 |
+
+#### 5.4.2 Embedding 选型决策树
+
+```
+语言？
+├── 纯英文
+│   ├── 追求最高性能 → e5-mistral-7b / nomic-embed (可解释)
+│   ├── 追求成本效率 → bge-large-en-v1.5
+│   └── 需要商用 → nomic / snowflake-arctic
+│
+├── 中文为主
+│   ├── 追求最高性能 → gte-Qwen2 / bge-m3
+│   └── 需要快速 → gte-base-zh
+│
+└── 多语言 (含中文)
+    └── bge-m3 (100+语言) / gte-Qwen2 (中英)
+```
+
+---
+
+### 5.5 Agent 协议对比
+
+#### 5.5.1 MCP / A2A / AG-UI / UCP 横向对比
+
+| 维度 | **MCP** | **A2A** | **AG-UI** | **UCP** |
+|------|---------|---------|-----------|---------|
+| **全称** | Model Context Protocol | Agent-to-Agent Protocol | Agent-User Interface | Unified Agent Protocol |
+| **定位** | Agent ↔ 工具/数据 | Agent ↔ Agent | Agent ↔ 用户 | Agent ↔ 资源/调度 |
+| **核心场景** | Tool Use / RAG / DB | Multi-Agent 协作 | 前端 Streaming UI | 资源调度/优先级 |
+| **传输** | JSON-RPC 2.0 | JSON-RPC 2.0 | Server-Sent Events | HTTP/gRPC |
+| **状态管理** | 会话级别 | 任务级别 | 流式 UI | 调度队列 |
+| **生态** | Anthropic 主推 | OpenAI/Google | AgentKit | emerging |
+| **成熟度** | 高 (已广泛采用) | 中 (2025 起) | 中 (早期) | 低 (提议中) |
+| **文档** | modelcontextprotocol.github.io | a2a-protocol.dev | agentui.dev | ucp.ai |
+
+#### 5.5.2 协议选型决策树
+
+```
+需要解决什么问题？
+├── Agent 需要调用外部工具 (数据库、API、文件系统)
+│   └── MCP (事实标准)
+│
+├── 多个 Agent 需要相互通信/协作
+│   └── A2A (多 Agent 企业场景)
+│
+├── Agent 需要流式 UI (打字效果、进度)
+│   └── AG-UI (前端集成)
+│
+└── Agent 需要调度资源/任务队列
+    └── UCP (资源编排)
+```
+
+---
+
+### 5.6 Agent 工具/IDE 对比
+
+#### 5.6.1 Coding Agent 产品对比
+
+| 产品 | 开发方 | 核心能力 | 架构特点 | 目标用户 | 定价 |
+|------|--------|---------|----------|----------|------|
+| **Devin** | Cognition | 端到端编码 + 部署 | Agent Foundation | 专业开发者 | $100+/月 |
+| **Cursor** | Anysphere | AI IDE (Composer/Writer) | LLM + Editor | 开发者 | $20/月 |
+| **Windsurf** | Codeium | Agentic Flow | Cascade Agent | 开发者 | $15/月 |
+| **Copilot** | Microsoft | 代码补全/生成 | LLM 集成 VSCode | 开发者 | $19/月 |
+| **Claude Code** | Anthropic | CLI Agent | Claude + Tools | 开发者 | $20/月 |
+| **Gemini Code Assist** | Google | 代码补全 + Agent | Gemini Pro | 开发者 | $19/月 |
+| **Junie** | JetBrains | IDE 内嵌 Agent | LLM + IDEA | 开发者 | 订阅内 |
+| **Amazon CodeWhisperer** | Amazon | 代码补全 + 安全扫描 | Amazon Q | 开发者 | 免费/专业 |
+| **Codex** | OpenAI | 纯 API / CLI | GPT-4o | 开发者 | 按 token |
+
+#### 5.6.2 Computer Use 产品对比
+
+| 产品 | 公司 | 能力 | 环境 | 自主程度 | 成熟度 |
+|------|------|------|------|---------|--------|
+| **Claude Computer Use** | Anthropic | 屏幕感知 + 键鼠操作 | macOS/Windows | 高 | 预览版 |
+| **OpenAI Operator** | OpenAI | 网页操作 + Browser | Web | 中 | 早期 |
+| **Google Jules** | Google | GitHub Issue → PR | 代码 | 中 | 预览版 |
+| **Microsoft Copilot Agents** | Microsoft | 企业自动化 | 多环境 | 中高 | 预览版 |
+| **Browser Use** | open source | 网页自动化 | Playwright | 中 | 开源 |
+| **AutoGLM** | 智谱 | 手机/网页操作 | Android/Web | 中 | 中国市场 |
+
+---
+
+### 5.7 微调框架对比
+
+#### 5.7.1 PEFT/微调框架横向对比
+
+| 框架 | 支持方法 | 适用场景 | 显存需求 | 社区 | 备注 |
+|------|---------|---------|---------|------|------|
+| **LoRA** | LoRA/QLoRA/DoRA | 通用微调 | 中 | 极大 | 事实标准 |
+| **peft (HuggingFace)** | LoRA/QLoRA/IA3/Prefix | 通用 | 中 | 大 | 生态完善 |
+| **Axolotl** | 全方法 | 训练配置 | 中 | 中 | 配置驱动 |
+| **LLaMA-Factory** | 全方法 + 量化的 | 中文社区 | 中 | 大 | 中文友好 |
+| **DeepSpeed-Chat** | RLHF/DPO/GRPO | 对话模型 | 高 | 中 | 微软主推 |
+| **veRL** | GRPO/REINFORCE/PPO | 强化学习微调 | 高 | 小 | 字节跳动 |
+| **OpenRLHF** | RLHF/DPO/KTO | RLHF 全流程 | 高 | 中 | 开源 RLHF |
+| **LLM-Pruner** | 结构化剪枝 | 模型压缩 | - | 小 | 剪枝专用 |
+| **秦泗钊/EM-Adapters** | 专用 | 长上下文 | 中 | 小 | 学术 |
+
+---
+
+### 5.8 选型总结速查表
+
+```
+场景 → 推荐选型
+
+RAG 检索:
+  - Milvus (大规模) / Qdrant (性能) / Weaviate (功能)
+  - bge-m3 / gte-Qwen2 (Embedding)
+
+LLM 推理:
+  - 生产 (NVIDIA): vLLM / SGLang / TensorRT-LLM
+  - 本地 (Mac/CPU): llama.cpp / Ollama
+
+Agent 框架:
+  - 复杂工作流: LangGraph
+  - 多 Agent 协作: CrewAI
+  - 对话式多 Agent: AutoGen
+  - 企业低代码: Dify / Coze
+  - 快速工具调用: OpenAI Agents SDK
+
+Agent 协议:
+  - 工具调用: MCP (事实标准)
+  - 多 Agent 通信: A2A
+  - 流式 UI: AG-UI
+
+Coding Agent:
+  - IDE 内嵌: Cursor (最佳体验) / Copilot (生态)
+  - CLI Agent: Claude Code
+  - 端到端: Devin
+
+微调:
+  - 通用: peft (LoRA)
+  - 中文: LLaMA-Factory
+  - RLHF: OpenRLLF / veRL
+```
+
+---
+
+## 六、专业领域深度图谱
+
+### 6.1 AI Infrastructure 完整技术栈
+
+```
+AI Infrastructure Stack
+│
+├── 1. 数据层
+│   ├── 原始数据采集 → Scraping/API/日志
+│   ├── 数据标注 → Label Studio / Scale AI / Doccano
+│   ├── 数据管理 → Version Control / Lineage
+│   └── 特征工程 → Feature Store (Feast/Tecton)
+│
+├── 2. 训练层
+│   ├── 分布式训练框架 → PyTorch FSDP / DeepSpeed / Megatron-LM
+│   ├── 加速库 → Flash Attention / Transformer Engine
+│   ├── 监控 → Weights & Biases / MLflow / TensorBoard
+│   └── 调度 → KubeFlow / Volcano / Airflow
+│
+├── 3. 微调层
+│   ├── PEFT → LoRA / QLoRA / DoRA / IA3
+│   ├── Alignment → RLHF / DPO / KTO / GRPO
+│   └── 数据合成 → Self-Instruct / Evol-Instruct / Magpie
+│
+├── 4. 推理层
+│   ├── 推理引擎 → vLLM / SGLang / TensorRT-LLM / llama.cpp
+│   ├── 量化 → GPTQ / AWQ / GGUF / FP8
+│   ├── 部署 → ONNX / TorchScript / TFLite
+│   └── 边缘 → TensorRT Edge / ONNX Runtime / MNN
+│
+├── 5. 服务层
+│   ├── Gateway → API Key / Rate Limit / Fallback / Load Balance
+│   ├── Cache → KV Cache / Semantic Cache
+│   ├── A/B Testing → Canary / Feature Flag
+│   └── Cost → Token Budgeting / Model Routing
+│
+├── 6. 应用层
+│   ├── Agent → Tool Use / Planning / Memory / Multi-Agent
+│   ├── RAG → Retrieval / Chunking / Rerank / Hybrid Search
+│   ├── Guardrails → Input Filter / Output Filter / PII Detection
+│   └── Evaluation → Auto Eval / LLM-as-Judge / Golden Set
+│
+└── 7. 可观测性层
+    ├── Tracing → OpenTelemetry / LangSmith / Phoenix
+    ├── Metrics → Token Usage / Latency / Error Rate
+    ├── Logging → Prompt/Response Storage
+    └── Feedback → Human Feedback / Implicit Feedback
+```
+
+### 6.2 LLM 完整生命周期
+
+```
+LLM Lifecycle
+│
+├── 1. 预训练 (Pretraining)
+│   ├── 数据收集 → 网页爬取 / 书籍 / 代码 / 学术
+│   ├── 数据过滤 → 质量筛选 / 去毒 / 去重
+│   ├── 数据配比 → Scalin Law / 课程学习
+│   ├── 训练 → Transformer / MoE / SSM
+│   └── 评估 → Perplexity / Downstream Tasks
+│
+├── 2. 后训练 (Post-Training)
+│   │
+│   ├── 2.1 阶段一: 指令微调 (SFT)
+│   │   ├── 数据 → Instruction-Tuning Dataset
+│   │   ├── 方法 → Next Token Prediction
+│   │   └── 目标 → 遵循指令能力
+│   │
+│   ├── 2.2 阶段二: 对齐微调 (Alignment)
+│   │   ├── RLHF
+│   │   │   ├── Reward Model → Human Preference
+│   │   │   ├── PPO → Policy Optimization
+│   │   │   └── 价值对齐
+│   │   ├── DPO
+│   │   │   ├── Preference Data → Direct Optimization
+│   │   │   └── 绕过 Reward Model
+│   │   ├── KTO
+│   │   │   └── Kahneman-Tversky 优化
+│   │   └── GRPO
+│   │       ├── Group Relative → Self-Play
+│   │       └── DeepSeek-R1 系列
+│   │
+│   └── 2. 阶段三: 特定能力增强
+│       ├── Math → PRM / Verifier / Process Reward
+│       ├── Code → Executed Feedback / Compiler
+│       └── Reasoning → Test-Time Compute / Search
+│
+├── 3. 部署 (Deployment)
+│   ├── 量化 → INT4/INT8/FP8 (精度 vs 速度权衡)
+│   ├── 推理优化 → Speculative Decoding / KV Cache
+│   └── Serving → vLLM / TensorRT-LLM
+│
+└── 4. 应用 (Application)
+    ├── Prompt Engineering → CoT / Few-Shot / System Prompt
+    ├── RAG → Retrieval Augmented Generation
+    ├── Agent → Tool Use + Planning + Memory
+    └── Evaluation → Benchmarks / Human Eval
+```
+
+### 6.3 AI Agent 完整架构
+
+```
+AI Agent Architecture
+│
+├── Core Brain
+│   ├── LLM (Foundation) → GPT-4o / Claude 3.5 / Gemini / Llama
+│   ├── Reasoning → Chain / Tree / Reflexion
+│   └── Planning → Hieronarchical / Task Decomposition
+│
+├── Memory System
+│   ├── Short-Term → Context Window / Attention
+│   ├── Long-Term → Vector Store / Knowledge Graph
+│   └── Episodic → Conversation History / Summary
+│
+├── Tool System
+│   ├── Tool Definition → OpenAPI / MCP Server
+│   ├── Tool Execution → Code Interpreter / API Call
+│   └── Tool Selection → Function Calling / Tool Use
+│
+├── Perception (Multi-Modal Input)
+│   ├── Text → Natural Language
+│   ├── Image → Vision Encoder / Image Understanding
+│   ├── Audio → Speech Recognition / Audio Understanding
+│   └── File → Document Parser / PDF Reader
+│
+├── Action (Output)
+│   ├── Text Generation → Natural Language Response
+│   ├── Code Execution → Python / Bash
+│   ├── API Call → HTTP Request / Tool Invocation
+│   └── GUI Interaction → Click / Type / Screenshot
+│
+├── Multi-Agent System
+│   ├── 协作 → CrewAI / LangGraph Multi-Agent
+│   ├── 对话 → AutoGen / OpenAI Agents
+│   └── 协议 → MCP / A2A / AG-UI
+│
+└── Safety & Control
+    ├── Guardrails → Scope Limiting / Permission
+    ├── Sandboxing → Isolation / Timeout
+    ├── Observability → Trace / Log / Monitor
+    └── Human-in-the-Loop → Approval / Override
+```
+
+### 6.4 RAG 系统完整架构
+
+```
+RAG System Architecture
+│
+├── 1. 文档处理 (Ingestion)
+│   ├── 文档解析 → PDF / Word / HTML / Markdown
+│   ├── 分块 (Chunking)
+│   │   ├── Fixed Size → 简单但可能有语义断裂
+│   │   ├── Semantic → 基于句子/段落边界
+│   │   ├── Recursive → 层级递归切分
+│   │   └── Agentic → LLM 驱动的智能切分
+│   └── 向量化 → Embedding Model (BGE/E5)
+│
+├── 2. 存储层 (Storage)
+│   ├── 向量数据库 → Milvus / Qdrant / Pinecone
+│   ├── 稀疏索引 → BM25 / TF-IDF
+│   ├── 知识图谱 → Neo4j / TuGraph (Graph RAG)
+│   └── 混合存储 → Dense + Sparse + KG
+│
+├── 3. 检索层 (Retrieval)
+│   ├── 密集检索 → Bi-Encoder / Dense Vector
+│   ├── 稀疏检索 → BM25 / Keyword
+│   ├── 混合检索 → Dense + Sparse + RR
+│   ├── 重排序 → Cross-Encoder / ColBERT
+│   └── 查询改写 → HyDE / Query Expansion
+│
+├── 4. 生成层 (Generation)
+│   ├── LLM → GPT-4o / Claude / Llama
+│   ├── Prompt → Context + Query + System Prompt
+│   └── 输出验证 → Fact Check / Hallucination Detection
+│
+└── 5. RAG 范式演进
+    ├── Naive RAG → Retrieve → Generate
+    ├── Advanced RAG → Query Rewrite / HyDE / Rerank
+    ├── Graph RAG → Entity → Relationship → Knowledge Graph
+    ├── Agentic RAG → Multi-Step / Query Planning / Tool Use
+    └── Self-RAG → Reflection → Relevance → Utility
+```
+
+### 6.5 AI Safety 完整技术栈
+
+```
+AI Safety Stack
+│
+├── 1. Alignment (对齐)
+│   ├── RLHF → Human Preference → Reward Model → PPO
+│   ├── DPO → Direct Preference Optimization
+│   ├── Constitutional AI → Principle-based Alignment
+│   └── GRPO → Group Relative Policy Optimization
+│
+├── 2. Interpretability (可解释性)
+│   ├── Mechanistic → Circuit Analysis / Activation Patching
+│   ├── Feature → Superposition / Polysemantic
+│   ├── Tool → SHAP / LIME / Attention Analysis
+│   └── Training → Grokking / Phase Transitions
+│
+├── 3. Red Teaming (红队测试)
+│   ├── Prompt Injection → Jailbreaking / Prompt Leaking
+│   ├── Adversarial Attack → FGSM / PGD / AutoPrompt
+│   ├── Safety Bypass → Refusal Suppression / Goal Hijack
+│   └── Evaluations → HarmBench / RedEval / StrongREJECT
+│
+├── 4. Guardrails (护栏)
+│   ├── Input → Toxicity Detection / PII Removal / Topic Control
+│   ├── Output → Content Filter / Factuality Check
+│   └── Behavior → Rate Limit / Scope Limiting
+│
+├── 5. Governance (治理)
+│   ├── EU AI Act → Risk Classification / Compliance
+│   ├── Model Card → Documentation / Transparency
+│   ├── Bias Detection → Fairness Metrics / Demographic Parity
+│   └── Watermarking → Text / Image / Structured Output
+│
+└── 6. Evaluation (评估)
+    ├── Truthfulness → TruthfulQA / SimpleQA
+    ├── Safety → HarmBench / ToxiGen
+    ├── Robustness → Adversarial / Distribution Shift
+    └── Capability → MMLU / HumanEval / GAIA
+```
+
+---
+
+*Last updated: 2026-04-09*
+*新增第五节开源选型对比（向量数据库/推理引擎/Agent框架/Embedding模型/Agent协议/Coding Agent/微调框架），新增第六节专业领域深度图谱（AI Infrastructure完整技术栈、LLM完整生命周期、AI Agent完整架构、RAG系统完整架构、AI Safety完整技术栈），覆盖 8 类开源选型横向对比、15+ 选型决策树、100+ 技术点关联*

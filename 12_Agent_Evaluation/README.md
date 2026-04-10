@@ -85,6 +85,12 @@ This framework provides standardized methodologies for benchmarking and evaluati
 └── QA/                            # Quality assurance
     ├── Quality_Assurance.md        # Evaluation quality control
     └── Performance_Benchmarks.md   # Industry benchmarks
+
+├── Ops_Agent_Harness_2026.md       # Ops Agent evaluation framework
+├── Agent_Harness_Complete_2026.md  # Agent Harness comprehensive guide
+├── Agent_Harness_Deep_Dive.md      # Agent Harness technical deep dive
+├── Agent_Red_Teaming_2026.md       # Agent red teaming & security evaluation
+└── Multi_Agent_Evaluation_2026.md  # Multi-Agent System evaluation
 ```
 
 ---
@@ -126,6 +132,17 @@ Score Range    Grade    Description
 - **Continuous Benchmarking**: Real-time evaluation in production environments
 - **Multi-dimensional Scoring**: Weighted composite scores across capabilities
 - **Statistical Rigor**: Confidence intervals, significance testing, bias detection
+- **Agent Red Teaming**: Systematic security vulnerability assessment
+- **Multi-Agent System Evaluation**: Comprehensive MAS collaboration assessment
+
+### Specialized Evaluation Frameworks
+
+| 框架 | 描述 | 适用场景 |
+|------|------|----------|
+| [Agent Harness Complete](./Agent_Harness_Complete_2026.md) | 完整 Agent 评估指南 | 综合评估 |
+| [Ops Agent Harness](./Ops_Agent_Harness_2026.md) | 运维场景评估 | DevOps Agent |
+| [Agent Red Teaming](./Agent_Red_Teaming_2026.md) | 安全红队评估 | 漏洞发现 |
+| [Multi-Agent Evaluation](./Multi_Agent_Evaluation_2026.md) | 多 Agent 协作评估 | MAS 系统 |
 
 ### DevOps Integration
 
@@ -156,6 +173,35 @@ Score Range    Grade    Description
 | Configure scoring | [Scoring System](./Benchmarking/Scoring_System.md) |
 | Compare multiple agents | [Ranking System](./Rubrics/Ranking_System.md) |
 | Production deployment eval | [Production Assessment](./Assessment/Production_Assessment.md) |
+| Ops Agent evaluation | [Ops Agent Harness](./Ops_Agent_Harness_2026.md) | |
+
+---
+
+## Specialized Frameworks
+
+### Ops Agent Harness
+
+针对运维场景的 AI Agent 评估框架，涵盖监控告警、故障诊断、自动化修复、安全合规等核心运维能力。
+
+| 文档 | 描述 |
+|------|------|
+| [Ops Agent Harness 2026](./Ops_Agent_Harness_2026.md) | 运维 Agent 完整评估框架 |
+
+### Agent Red Teaming Framework
+
+系统性的 Agent 安全评估框架，通过模拟真实攻击者视角发现安全漏洞。
+
+| 文档 | 描述 |
+|------|------|
+| [Agent Red Teaming 2026](./Agent_Red_Teaming_2026.md) | 安全红队评估框架 |
+
+### Multi-Agent System Evaluation
+
+针对多 Agent 协作场景的评估框架，评估 Agent 间通信、任务协调、集体决策等能力。
+
+| 文档 | 描述 |
+|------|------|
+| [Multi-Agent Evaluation 2026](./Multi_Agent_Evaluation_2026.md) | MAS 协作评估框架 |
 
 ---
 
@@ -163,6 +209,8 @@ Score Range    Grade    Description
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 3.0.0 | 2026-04 | 新增 Agent Red Teaming 2026 + Multi-Agent Evaluation 2026 |
+| 2.0.0 | 2026-04 | 新增 Ops Agent Harness 2026 |
 | 1.0.0 | 2026-03 | Initial release with full framework |
 
 ---
