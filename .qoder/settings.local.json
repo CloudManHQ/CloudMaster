@@ -271,7 +271,8 @@
       "Bash(head -30 17_Ethics_Safety/Constitutional_AI_Deep_Dive.md 2>/dev/null && echo \"---\" && head -30 17_Ethics_Safety/Guardrails_Production_Guide.md 2>/dev/null)",
       "Bash(du -sh _sources/yeasy/ && echo && find _sources/yeasy -name \"*.md\" | wc -l && echo \"个 MD 文件\")",
       "Bash(rm -rf _sources/yeasy/)",
-      "Bash(find /Users/allengaller/Documents/GitHub/ai-guru-global/ai-guru-database -type d -not -path '*/\\\\.*' -not -path '*/node_modules*' | sort | head -100)"
+      "Bash(find /Users/allengaller/Documents/GitHub/ai-guru-global/ai-guru-database -type d -not -path '*/\\\\.*' -not -path '*/node_modules*' | sort | head -100)",
+      "Bash(ls -la /Users/allengaller/Documents/GitHub/ai-guru-global/ai-guru-database/.env 2>/dev/null; echo \"---\"; ls -la /Users/allengaller/Documents/GitHub/ai-guru-global/.env 2>/dev/null; echo \"---\"; ls -la /Users/allengaller/Documents/GitHub/ai-guru-global/ai-guru-database/.env* 2>/dev/null; echo \"---\"; ls -la ~/.obsidian-wiki/config 2>/dev/null; echo \"---\"; ls -la ~/.obsidian-wiki/.env 2>/dev/null; echo \"---\"; ls -la ~/.obsidian-wiki/ 2>/dev/null)"
     ]
   }
 }
